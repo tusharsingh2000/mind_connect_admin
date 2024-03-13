@@ -24,6 +24,21 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:sign-routes'
     },
     {
+      title: 'FAQs',
+      path: '/faqs',
+      icon: 'mdi:faq'
+    },
+    {
+      title: 'Sessions',
+      path: '/sessions',
+      icon: 'bxs:calendar'
+    },
+    {
+      title: 'Queries',
+      path: '/queries',
+      icon: 'material-symbols-light:contact-support'
+    },
+    {
       path: '/setting',
       title: 'Settings',
       icon: 'lets-icons:setting-alt-fill'

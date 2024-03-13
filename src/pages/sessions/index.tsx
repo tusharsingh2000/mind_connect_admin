@@ -17,7 +17,6 @@ import TableColumns, { StatusObj } from 'src/@core/components/table'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
-import AddMentorForm from './form'
 import Link from 'next/link'
 
 // ** Styled Tab component
@@ -59,11 +58,11 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 }))
 
 const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
+  1: { title: 'accepted', color: 'primary' },
+  2: { title: 'completed', color: 'success' },
+  3: { title: 'cancelled', color: 'error' },
+  4: { title: 'pending', color: 'warning' },
+  5: { title: 'rescheduled', color: 'info' }
 }
 
 // ** renders client column
@@ -88,48 +87,68 @@ const renderClient = (params: GridRenderCellParams) => {
   }
 }
 
-const Mentors = () => {
+const Sessions = () => {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const otherColumns: GridColDef[] = [
+    {
+      flex: 0.125,
+      minWidth: 150,
+      field: 'accepted',
+      headerName: 'Accepted',
+      renderCell: (params: GridRenderCellParams) => {
+        return <div>12/02/2024 12:24 PM</div>
+      }
+    },
+    {
+      flex: 0.125,
+      minWidth: 150,
+      field: 'completed',
+      headerName: 'Completed',
+      renderCell: (params: GridRenderCellParams) => {
+        return <div>14/02/2024 12:24 PM</div>
+      }
+    },
+    {
+      flex: 0.125,
+      minWidth: 150,
+      field: 'cancelled',
+      headerName: 'Cancelled',
+      renderCell: (params: GridRenderCellParams) => {
+        return <div>13/02/2024 12:24 PM</div>
+      }
+    },
+    {
+      flex: 0.125,
+      minWidth: 150,
+      field: 'rescheduled',
+      headerName: 'Rescheduled',
+      renderCell: (params: GridRenderCellParams) => {
+        return <div>12/02/2024 12:24 PM</div>
+      }
+    }
+  ]
+
   const columns: GridColDef[] = [
     {
-      flex: 0.25,
-      minWidth: 260,
-      field: 'full_name',
-      headerName: 'Montor Name',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params
-        return (
-          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              {renderClient(params)}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
-                </Typography>
-                <Typography noWrap variant='caption'>
-                  {row.email}
-                </Typography>
-              </Box>
-            </Box>
-          </Link>
-        )
-      }
+      flex: 0.175,
+      type: 'date',
+      minWidth: 120,
+      headerName: 'Date',
+      field: 'start_date',
+      valueGetter: params => new Date(params.value),
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.start_date}
+        </Typography>
+      )
     },
     {
       flex: 0.25,
       minWidth: 260,
-      field: 'matched',
-      headerName: 'Matched With',
+      field: 'full_name',
+      headerName: 'Mentee',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
         return (
@@ -158,26 +177,56 @@ const Mentors = () => {
       }
     },
     {
-      flex: 0.15,
+      flex: 0.25,
+      minWidth: 260,
+      field: 'matched',
+      headerName: 'Mentor',
+      renderCell: (params: GridRenderCellParams) => {
+        const { row } = params
+        return (
+          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              {renderClient(params)}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  '&:hover': {
+                    textDecoration: 'underline'
+                  }
+                }}
+              >
+                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+                  {row.full_name}
+                </Typography>
+                <Typography noWrap variant='caption'>
+                  {row.email}
+                </Typography>
+              </Box>
+            </Box>
+          </Link>
+        )
+      }
+    },
+    {
+      flex: 0.1,
       minWidth: 110,
-      field: 'salary',
-      headerName: 'Sessions Made',
+      field: 'age',
+      headerName: 'Start Time',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.salary}
+          09:00 AM
         </Typography>
       )
     },
     {
-      flex: 0.175,
-      type: 'date',
-      minWidth: 120,
-      headerName: 'New Session',
-      field: 'start_date',
-      valueGetter: params => new Date(params.value),
+      flex: 0.1,
+      minWidth: 110,
+      field: 'end',
+      headerName: 'End Time',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.start_date}
+          10:00 AM
         </Typography>
       )
     },
@@ -188,7 +237,6 @@ const Mentors = () => {
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
         const status = statusObj[params.row.status]
-
         return (
           <CustomChip
             rounded
@@ -224,7 +272,7 @@ const Mentors = () => {
 
   return (
     <Grid container spacing={6}>
-      <PageHeader title='MENTORS' />
+      <PageHeader title='Sessions' />
       <Grid item xs={12}>
         <Divider />
       </Grid>
@@ -239,13 +287,12 @@ const Mentors = () => {
               sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
             >
               <Tab value='all' label='All' />
-              <Tab value='matched' label='Matched' />
-              <Tab value='unMatched' label='Unmatched' />
-              <Tab value='invited' label='Invited' />
-              <Tab value='inactive' label='Inactive' />
+              <Tab value='pending' label='Pending' />
+              <Tab value='accepted' label='Accepted' />
+              <Tab value='cancelled' label='Cancelled' />
+              <Tab value='completed' label='Completed' />
             </TabList>
           </TabContext>
-          <AddMentorForm />
         </Box>
         <Box sx={{ mt: 5 }}>
           {isLoading ? (
@@ -255,7 +302,12 @@ const Mentors = () => {
             </Box>
           ) : (
             <>
-              <TableColumns columns={columns} />
+              <TableColumns
+                columns={[
+                  ...columns,
+                  ...otherColumns?.filter(ele => (activeTab === 'all' ? true : ele.field === activeTab))
+                ]}
+              />
             </>
           )}
         </Box>
@@ -264,4 +316,4 @@ const Mentors = () => {
   )
 }
 
-export default Mentors
+export default Sessions

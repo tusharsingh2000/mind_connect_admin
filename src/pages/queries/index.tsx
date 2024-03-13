@@ -8,16 +8,14 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import Grid from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Divider, Rating } from '@mui/material'
+import { Box, Divider } from '@mui/material'
 import PageHeader from 'src/@core/components/page-header'
 import TableColumns, { StatusObj } from 'src/@core/components/table'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
-import AddMentorForm from './form'
 import Link from 'next/link'
 
 // ** Styled Tab component
@@ -59,11 +57,11 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 }))
 
 const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
+  1: { title: 'accepted', color: 'primary' },
+  2: { title: 'completed', color: 'success' },
+  3: { title: 'cancelled', color: 'error' },
+  4: { title: 'pending', color: 'warning' },
+  5: { title: 'rescheduled', color: 'info' }
 }
 
 // ** renders client column
@@ -88,48 +86,16 @@ const renderClient = (params: GridRenderCellParams) => {
   }
 }
 
-const Mentors = () => {
+const Queries = () => {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const columns: GridColDef[] = [
     {
-      flex: 0.25,
-      minWidth: 260,
+      flex: 0.15,
+      minWidth: 120,
       field: 'full_name',
-      headerName: 'Montor Name',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params
-        return (
-          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              {renderClient(params)}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
-                </Typography>
-                <Typography noWrap variant='caption'>
-                  {row.email}
-                </Typography>
-              </Box>
-            </Box>
-          </Link>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      minWidth: 260,
-      field: 'matched',
-      headerName: 'Matched With',
+      headerName: 'User',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
         return (
@@ -158,37 +124,29 @@ const Mentors = () => {
       }
     },
     {
-      flex: 0.15,
+      flex: 0.2,
       minWidth: 110,
-      field: 'salary',
-      headerName: 'Sessions Made',
+      headerAlign: 'center',
+      field: 'age',
+      headerName: 'Query',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.salary}
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
+          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
+          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
+          PageMaker including versions of Lorem Ipsum.
         </Typography>
       )
     },
     {
-      flex: 0.175,
-      type: 'date',
-      minWidth: 120,
-      headerName: 'New Session',
-      field: 'start_date',
-      valueGetter: params => new Date(params.value),
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.start_date}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.125,
-      minWidth: 140,
+      flex: 0.1,
+      minWidth: 60,
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
         const status = statusObj[params.row.status]
-
         return (
           <CustomChip
             rounded
@@ -202,13 +160,20 @@ const Mentors = () => {
       }
     },
     {
-      flex: 0.125,
+      flex: 0.2,
       minWidth: 140,
       field: 'ratings',
-      headerName: 'Ratings',
-      renderCell: (params: GridRenderCellParams) => {
-        return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
-      }
+      headerName: 'Notes',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
+          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
+          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
+          PageMaker including versions of Lorem Ipsum.
+        </Typography>
+      )
     }
   ]
 
@@ -224,29 +189,11 @@ const Mentors = () => {
 
   return (
     <Grid container spacing={6}>
-      <PageHeader title='MENTORS' />
+      <PageHeader title='Queries' />
       <Grid item xs={12}>
         <Divider />
       </Grid>
       <Grid item xs={12}>
-        <Box display={'flex'} justifyContent='space-between' alignItems='center'>
-          <TabContext value={activeTab}>
-            <TabList
-              variant='scrollable'
-              scrollButtons='auto'
-              onChange={handleChange}
-              aria-label='forced scroll tabs example'
-              sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-            >
-              <Tab value='all' label='All' />
-              <Tab value='matched' label='Matched' />
-              <Tab value='unMatched' label='Unmatched' />
-              <Tab value='invited' label='Invited' />
-              <Tab value='inactive' label='Inactive' />
-            </TabList>
-          </TabContext>
-          <AddMentorForm />
-        </Box>
         <Box sx={{ mt: 5 }}>
           {isLoading ? (
             <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -264,4 +211,4 @@ const Mentors = () => {
   )
 }
 
-export default Mentors
+export default Queries

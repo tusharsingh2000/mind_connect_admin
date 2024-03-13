@@ -18,6 +18,11 @@ const Registration = () => {
           SET NEW MENTEE
         </Button>
       </Box>
+      <Box maxWidth={300} my={5}>
+        <Button fullWidth size='large' variant='outlined'>
+          LOGOUT FROM ALL DEVICES
+        </Button>
+      </Box>
     </Box>
   )
 }
