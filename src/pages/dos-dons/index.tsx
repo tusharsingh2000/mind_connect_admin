@@ -98,8 +98,9 @@ const DosNDons = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleChange = (event: SyntheticEvent, value: string) => {
-    // setIsLoading(true)
+    setIsLoading(false)
     setActiveTab(value)
+
     // router
     //   .push({
     //     pathname: `/apps/user/view/${value.toLowerCase()}`
@@ -162,7 +163,7 @@ const DosNDons = () => {
                     Do's
                   </Typography>
                   {dos?.map((item, index) => (
-                    <DoDo dodo={item} />
+                    <DoDo key={index} dodo={item} />
                   ))}
                 </TabPanel>
                 <TabPanel value='dons'>
@@ -170,7 +171,7 @@ const DosNDons = () => {
                     Don's
                   </Typography>
                   {dons?.map((item, index) => (
-                    <DoDo dodo={item} />
+                    <DoDo key={index} dodo={item} />
                   ))}
                 </TabPanel>
               </>

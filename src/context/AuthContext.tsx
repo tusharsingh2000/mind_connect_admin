@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 
 // ** Config
-import authConfig from 'src/configs/auth'
+import authConfig, { BASE_URL } from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
@@ -39,32 +39,38 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (storedToken) {
-        setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
-      } else {
+      const userData = window.localStorage.getItem('userData')
+      // if (storedToken) {
+      //   setLoading(true)
+      //   await axios
+      //     .get(authConfig.meEndpoint, {
+      //       headers: {
+      //         Authorization: storedToken
+      //       }
+      //     })
+      //     .then(async response => {
+      //       setLoading(false)
+      //       setUser({ ...response.data.userData })
+      //     })
+      //     .catch(() => {
+      //       localStorage.removeItem('userData')
+      //       localStorage.removeItem('refreshToken')
+      //       localStorage.removeItem('accessToken')
+      //       setUser(null)
+      //       setLoading(false)
+      //       if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+      //         router.replace('/login')
+      //       }
+      //     })
+      // } else {
+      if (userData) {
+        setUser(JSON.parse(userData))
         setLoading(false)
+
+        // setUser({ ...response.data.userData })
       }
+      setLoading(false)
+      // }
     }
 
     initAuth()
@@ -72,16 +78,17 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
+    delete params.rememberMe
     axios
-      .post(authConfig.loginEndpoint, params)
+      .post(`${BASE_URL}/auth/admin/login`, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
+        // params.rememberMe
+        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
+        // : null
         const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        setUser({ ...response.data.user })
+        window.localStorage.setItem('userData', JSON.stringify(response.data.user))
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 

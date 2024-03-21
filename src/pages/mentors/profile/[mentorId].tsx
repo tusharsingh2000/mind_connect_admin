@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
-import { Avatar, Box, Grid, InputAdornment, MenuItem, TextField, Typography } from '@mui/material'
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import { Box, Grid, InputAdornment, MenuItem, TextField, Typography } from '@mui/material'
+import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { Icon } from '@iconify/react'
 import GoBackButton from 'src/@core/components/buttons/goBackButton'
@@ -29,11 +29,12 @@ const Profile = () => {
 
   const handleFileChange = (event: any) => {
     const file = event?.target?.files[0]
-    // Handle the file upload logic here
+    console.log(file)
   }
 
   const Cells = ({ title }: { title: string }) => {
-    let selected = !!(title === 'Real Estate Business')
+    const selected = !!(title === 'Real Estate Business')
+
     return (
       <Box
         py={2}

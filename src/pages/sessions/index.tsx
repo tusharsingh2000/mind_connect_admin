@@ -97,7 +97,7 @@ const Sessions = () => {
       minWidth: 150,
       field: 'accepted',
       headerName: 'Accepted',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <div>12/02/2024 12:24 PM</div>
       }
     },
@@ -106,7 +106,7 @@ const Sessions = () => {
       minWidth: 150,
       field: 'completed',
       headerName: 'Completed',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <div>14/02/2024 12:24 PM</div>
       }
     },
@@ -115,7 +115,7 @@ const Sessions = () => {
       minWidth: 150,
       field: 'cancelled',
       headerName: 'Cancelled',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <div>13/02/2024 12:24 PM</div>
       }
     },
@@ -124,7 +124,7 @@ const Sessions = () => {
       minWidth: 150,
       field: 'rescheduled',
       headerName: 'Rescheduled',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <div>12/02/2024 12:24 PM</div>
       }
     }
@@ -151,6 +151,7 @@ const Sessions = () => {
       headerName: 'Mentee',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -183,6 +184,7 @@ const Sessions = () => {
       headerName: 'Mentor',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -213,7 +215,7 @@ const Sessions = () => {
       minWidth: 110,
       field: 'age',
       headerName: 'Start Time',
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: () => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
           09:00 AM
         </Typography>
@@ -224,7 +226,7 @@ const Sessions = () => {
       minWidth: 110,
       field: 'end',
       headerName: 'End Time',
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: () => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
           10:00 AM
         </Typography>
@@ -237,6 +239,7 @@ const Sessions = () => {
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
         const status = statusObj[params.row.status]
+
         return (
           <CustomChip
             rounded
@@ -254,15 +257,16 @@ const Sessions = () => {
       minWidth: 140,
       field: 'ratings',
       headerName: 'Ratings',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
       }
     }
   ]
 
   const handleChange = (event: SyntheticEvent, value: string) => {
-    // setIsLoading(true)
+    setIsLoading(false)
     setActiveTab(value)
+
     // router
     //   .push({
     //     pathname: `/apps/user/view/${value.toLowerCase()}`

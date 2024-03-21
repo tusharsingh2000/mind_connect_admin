@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -10,15 +10,60 @@ import DialogContent from '@mui/material/DialogContent'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
-import { Input, MenuItem, Typography } from '@mui/material'
+import { MenuItem, Typography } from '@mui/material'
+import axios from 'axios'
+import authConfig, { BASE_URL } from 'src/configs/auth'
+import { toast } from 'react-hot-toast'
 
-const AssignMentorForm = () => {
+const AssignMentorForm = ({ menteeId }: { menteeId: string | string[] }) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
+  const [selectedMentor, setSelectedMentor] = useState('0')
+  const [mentors, setMentors] = useState<{ email: string; firstName: string; lastName: string; _id: string }[]>([])
 
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
+
+  const assignMentor = async () => {
+    const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+    if (token) {
+      const response = await axios.patch(
+        `${BASE_URL}/admin/assign-mentor`,
+        { menteeId, mentorId: selectedMentor },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      if (response?.status === 200) {
+        toast.success('Mentor assigned successfully.', {
+          duration: 2000
+        })
+      }
+    }
+  }
+
+  const getMentors = async () => {
+    const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+    if (token) {
+      const response = await axios.get(`${BASE_URL}/admin/mentors`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (response?.status === 200) {
+        setMentors(response?.data || [])
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (open) {
+      getMentors()
+    }
+  }, [open])
 
   return (
     <Fragment>
@@ -34,17 +79,37 @@ const AssignMentorForm = () => {
         <DialogContent>
           <Box display={'flex'} gap={5} flexDirection='column'>
             <Box>
-              <CustomTextField variant='filled' fullWidth size='small' select value={0} id='custom-select'>
-                <MenuItem disabled value={0}>
+              <CustomTextField
+                variant='filled'
+                fullWidth
+                size='small'
+                select
+                value={selectedMentor}
+                id='custom-select'
+                onChange={val => {
+                  setSelectedMentor(val.target.value)
+                }}
+              >
+                <MenuItem disabled value={'0'}>
                   Select Mentor
                 </MenuItem>
-                <MenuItem value={10}>Mentor A</MenuItem>
-                <MenuItem value={20}>Mentor B</MenuItem>
-                <MenuItem value={30}>Mentor C</MenuItem>
+                {mentors?.map(item => (
+                  <MenuItem key={item?._id || ''} value={item?._id || ''}>
+                    {`${item?.firstName || ''} ${item?.lastName || ''}`}
+                  </MenuItem>
+                ))}
               </CustomTextField>
             </Box>
             <Box display={'flex'} gap={5}>
-              <Button fullWidth variant='outlined' size='large'>
+              <Button
+                onClick={() => {
+                  setSelectedMentor('0')
+                  setOpen(false)
+                }}
+                fullWidth
+                variant='outlined'
+                size='large'
+              >
                 Cancel
               </Button>
               <Button fullWidth variant='contained' size='large'>

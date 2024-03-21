@@ -100,6 +100,7 @@ const Mentors = () => {
       headerName: 'Montor Name',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -132,6 +133,7 @@ const Mentors = () => {
       headerName: 'Matched With',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -206,15 +208,16 @@ const Mentors = () => {
       minWidth: 140,
       field: 'ratings',
       headerName: 'Ratings',
-      renderCell: (params: GridRenderCellParams) => {
+      renderCell: () => {
         return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
       }
     }
   ]
 
   const handleChange = (event: SyntheticEvent, value: string) => {
-    // setIsLoading(true)
+    setIsLoading(false)
     setActiveTab(value)
+
     // router
     //   .push({
     //     pathname: `/apps/user/view/${value.toLowerCase()}`

@@ -10,7 +10,7 @@ import DialogContent from '@mui/material/DialogContent'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
-import { Input, MenuItem, Typography } from '@mui/material'
+import { MenuItem, Typography } from '@mui/material'
 
 const AssignMenteeForm = () => {
   // ** State

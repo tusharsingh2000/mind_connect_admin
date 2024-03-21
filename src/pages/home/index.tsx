@@ -2,7 +2,7 @@
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
-let cards = [
+const cards = [
   {
     label: 'Mentors',
     value: '10',

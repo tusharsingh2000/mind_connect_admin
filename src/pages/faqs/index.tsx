@@ -98,8 +98,9 @@ const FAQs = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleChange = (event: SyntheticEvent, value: string) => {
-    // setIsLoading(true)
+    setIsLoading(false)
     setActiveTab(value)
+
     // router
     //   .push({
     //     pathname: `/apps/user/view/${value.toLowerCase()}`
@@ -162,7 +163,7 @@ const FAQs = () => {
                     Mentor
                   </Typography>
                   {dos?.map((item, index) => (
-                    <Faq faq={item} />
+                    <Faq key={index} faq={item} />
                   ))}
                 </TabPanel>
                 <TabPanel value='mentee'>
@@ -170,7 +171,7 @@ const FAQs = () => {
                     Mentee
                   </Typography>
                   {dons?.map((item, index) => (
-                    <Faq faq={item} />
+                    <Faq key={index} faq={item} />
                   ))}
                 </TabPanel>
               </>

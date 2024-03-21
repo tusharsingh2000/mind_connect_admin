@@ -6,7 +6,8 @@ import { useRouter } from 'next/router'
 
 const GoBackButton = () => {
   const router = useRouter()
-  return (
+  
+return (
     <Button onClick={() => router.back()} startIcon={<Icon icon='bi:arrow-left' />}>
       Back
     </Button>

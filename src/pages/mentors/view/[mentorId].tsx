@@ -1,4 +1,5 @@
 import { SyntheticEvent, useState } from 'react'
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import { Box, Button, Divider, Tab, Typography } from '@mui/material'
@@ -9,7 +10,8 @@ import { Icon } from '@iconify/react'
 import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
-import { OverView, Admin } from './tabs'
+import OverView from './tabs/overview'
+import Admin from './tabs/admin'
 import AssignMenteeForm from '../assign'
 import Link from 'next/link'
 

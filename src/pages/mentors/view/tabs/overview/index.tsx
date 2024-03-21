@@ -1,8 +1,7 @@
 import { Icon } from '@iconify/react'
-import { Box, Button, Card, CardActions, CardContent, CardHeader, Divider, Grid, Typography } from '@mui/material'
-import Questions from './Questions'
+import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, Typography } from '@mui/material'
 
-let cards = [
+const cards = [
   {
     label: 'Revenue',
     value: '1250 M+',

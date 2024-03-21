@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 
 // ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip'
@@ -11,15 +11,20 @@ import Typography from '@mui/material/Typography'
 import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Divider, MenuItem } from '@mui/material'
+import { Box, Button, CircularProgress, Divider, MenuItem, Switch } from '@mui/material'
 import PageHeader from 'src/@core/components/page-header'
-import TableColumns, { StatusObj } from 'src/@core/components/table'
+import TableColumns from 'src/@core/components/table'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import axios from 'axios'
+import authConfig, { BASE_URL } from 'src/configs/auth'
+import { Mentees } from 'src/types/Mentees'
+import { endOfMonth, endOfWeek, endOfYear, format, startOfMonth, startOfWeek, startOfYear } from 'date-fns'
+import { Icon } from '@iconify/react'
+import { toast } from 'react-hot-toast'
+import AlertDialog from 'src/@core/components/dialog'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -59,41 +64,34 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}
-
 // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
   const { row } = params
-  const stateNum = Math.floor(Math.random() * 6)
-  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
-  const color = states[stateNum]
-
-  if (row.avatar.length) {
-    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
+  // const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
+  if (row?.user?.avatar_url?.length) {
+    return <CustomAvatar src={row?.user?.avatar_url || ''} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
   } else {
     return (
-      <CustomAvatar
-        skin='light'
-        color={color as ThemeColor}
-        sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
-      >
-        {getInitials(row.full_name ? row.full_name : 'John Doe')}
+      <CustomAvatar skin='light' sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}>
+        {getInitials(row?.user?.firsName || 'John Doe')}
       </CustomAvatar>
     )
   }
 }
 
 const Mentees = () => {
-  const router = useRouter()
-
-  const [activeTab, setActiveTab] = useState<string>('all')
+  const [activeTab, setActiveTab] = useState<string>('-1')
+  const [activePeriod, setActivePeriod] = useState<string>('All Time')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 7 })
+  const [mentees, setMentees] = useState<{ user: Mentees; status: number; aiRating: number }[]>([])
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
+  const [totals, setTotals] = useState<{ all: number; approved: number; pending: number; rejected: number } | null>(
+    null
+  )
+  const [open, setOpen] = useState(false)
+  const [activeId, setActiveId] = useState('')
 
   const columns: GridColDef[] = [
     {
@@ -104,7 +102,7 @@ const Mentees = () => {
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
         return (
-          <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
+          <Link href={`mentees/view/${row?._id}`} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box
@@ -117,10 +115,10 @@ const Mentees = () => {
                 }}
               >
                 <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
+                  {`${row?.user?.firstName || ''} ${row?.user?.lastName || ''}`}
                 </Typography>
                 <Typography noWrap variant='caption'>
-                  {row.email}
+                  {row?.user?.email || ''}
                 </Typography>
               </Box>
             </Box>
@@ -135,7 +133,7 @@ const Mentees = () => {
       headerName: 'AI Rate',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.salary}
+          {`${params.row?.aiRating || 0}%`}
         </Typography>
       )
     },
@@ -144,11 +142,11 @@ const Mentees = () => {
       type: 'date',
       minWidth: 120,
       headerName: 'Registered on',
-      field: 'start_date',
+      field: 'createdAt',
       valueGetter: params => new Date(params.value),
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.start_date}
+          {params?.row?.user?.createdAt ? format(new Date(params?.row?.user?.createdAt), 'dd MMM yyyy') : '--'}
         </Typography>
       )
     },
@@ -158,31 +156,212 @@ const Mentees = () => {
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const status = statusObj[params.row.status]
-
+        const statuses = {
+          1: {
+            label: 'Approved',
+            color: 'success'
+          },
+          0: {
+            label: 'New Lead',
+            color: 'info'
+          },
+          2: {
+            label: 'Declined',
+            color: 'error'
+          }
+        }
         return (
           <CustomChip
             rounded
             size='small'
             skin='light'
-            color={status.color}
-            label={status.title}
+            // @ts-ignore
+            color={statuses[`${params?.row?.status}`]?.color}
+            // @ts-ignore
+            label={statuses[`${params?.row?.status}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
       }
+    },
+    {
+      flex: 0.1,
+      type: 'blocked',
+      minWidth: 120,
+      headerName: 'Blocked',
+      field: 'isBlocked',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          <Switch
+            onChange={() => {
+              changeUserStatus(params?.row?._id, !params?.row?.user?.isBlocked)
+            }}
+            checked={params?.row?.user?.isBlocked}
+          />
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      type: 'action',
+      minWidth: 120,
+      headerName: 'Action',
+      field: 'action',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          <Button
+            onClick={() => {
+              setOpen(true)
+              setActiveId(params?.row?.user?._id || '')
+            }}
+          >
+            <Icon icon='material-symbols:delete-outline' />
+          </Button>
+        </Typography>
+      )
     }
   ]
 
-  const handleChange = (event: SyntheticEvent, value: string) => {
-    // setIsLoading(true)
-    setActiveTab(value)
-    // router
-    //   .push({
-    //     pathname: `/apps/user/view/${value.toLowerCase()}`
-    //   })
-    //   .then(() => setIsLoading(false))
+  const deleteUser = async () => {
+    try {
+      setOpen(false)
+      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      if (token) {
+        setIsLoading(true)
+        const response = await axios.delete(`${BASE_URL}/admin/mentee/${activeId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setIsLoading(false)
+        if (response?.status === 200) {
+          toast.success('User deleted succesfully')
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  const changeUserStatus = async (userId: string, status: boolean) => {
+    try {
+      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      if (token) {
+        const response = await axios.patch(
+          `${BASE_URL}/admin/block-user/${userId}`,
+          {
+            isBlocked: status
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        if (response?.status === 200) {
+          let idx = -1
+          idx = mentees?.findIndex(ele => ele?.user?._id === userId)
+          if (idx > -1) {
+            let newArr = [...mentees]
+            newArr[idx] = {
+              ...newArr[idx],
+              user: {
+                ...newArr[idx]?.user,
+                isBlocked: status
+              }
+            }
+            setMentees([...newArr])
+            toast.success('User updated successfully')
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleChange = (event: SyntheticEvent, value: string) => {
+    setIsLoading(false)
+    setActiveTab(value)
+  }
+
+  const getMentees = async () => {
+    try {
+      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      if (token) {
+        setIsLoading(true)
+        const response = await axios.get(
+          `${BASE_URL}/admin/mentees?to=${to}&from=${from}&status=${activeTab}&page=${paginationModel.page + 1}&limit=${
+            paginationModel.pageSize
+          }`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        setIsLoading(false)
+        if (response?.status === 200) {
+          setMentees(response?.data?.mentees || [])
+          setTotals(response?.data?.count || null)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getDatesForPeriod = (period: string) => {
+    let fromDate, toDate
+
+    const today = new Date()
+
+    switch (period) {
+      case 'This Week':
+        fromDate = startOfWeek(today)
+        toDate = endOfWeek(today)
+        break
+      case 'This Month':
+        fromDate = startOfMonth(today)
+        toDate = endOfMonth(today)
+        break
+      case 'This Year':
+        fromDate = startOfYear(today)
+        toDate = endOfYear(today)
+        break
+      default:
+        fromDate = toDate = ''
+        break
+    }
+
+    if (typeof fromDate === 'string' || typeof toDate === 'string') {
+      setFrom('')
+      setTo('')
+    } else {
+      setFrom(format(fromDate, 'yyyy-MM-dd'))
+      setTo(format(toDate, 'yyyy-MM-dd'))
+    }
+  }
+
+  const getTotal = () => {
+    switch (activeTab) {
+      case '-1':
+        return totals?.all || 0
+      case '1':
+        return totals?.approved || 0
+      case '0':
+        return totals?.pending || 0
+      case '2':
+        return totals?.rejected || 0
+
+      default:
+        return totals?.all || 0
+    }
+  }
+
+  useEffect(() => {
+    getMentees()
+  }, [paginationModel, activeTab, to])
 
   return (
     <Grid container spacing={6}>
@@ -192,7 +371,7 @@ const Mentees = () => {
       </Grid>
       <Grid item xs={12}>
         <Box display={'flex'} justifyContent='space-between' alignItems='center'>
-          <TabContext value={activeTab}>
+          <TabContext value={`${activeTab}`}>
             <TabList
               variant='scrollable'
               scrollButtons='auto'
@@ -200,37 +379,56 @@ const Mentees = () => {
               aria-label='forced scroll tabs example'
               sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
             >
-              <Tab value='all' label='All (678)' />
-              <Tab value='approved' label='Approved (26)' />
-              <Tab value='newLeads' label='New Leads (212)' />
-              <Tab value='inProgress' label='In Progress (512)' />
-              <Tab value='declined' label='Declined (12)' />
+              <Tab value={'-1'} label={`All (${totals?.all || 0})`} />
+              <Tab value={'1'} label={`Approved (${totals?.approved || 0})`} />
+              <Tab value={'0'} label={`New Leads (${totals?.pending || 0})`} />
+              <Tab value={'2'} label={`Declined (${totals?.rejected || 0})`} />
             </TabList>
           </TabContext>
           <Box display={'flex'} gap={5}>
-            {/* <Button size='small' variant='outlined'>
-              Do's & Dont's
-            </Button> */}
-            <CustomTextField size='small' select value={10} id='custom-select'>
-              <MenuItem value={10}>This Week</MenuItem>
-              <MenuItem value={20}>This Month</MenuItem>
-              <MenuItem value={30}>This Year</MenuItem>
+            <CustomTextField
+              onChange={val => {
+                setActivePeriod(val.target.value)
+                getDatesForPeriod(val.target.value)
+              }}
+              size='small'
+              select
+              value={activePeriod}
+              id='custom-select'
+            >
+              <MenuItem value={'All Time'}>All Time</MenuItem>
+              <MenuItem value={'This Week'}>This Week</MenuItem>
+              <MenuItem value={'This Month'}>This Month</MenuItem>
+              <MenuItem value={'This Year'}>This Year</MenuItem>
             </CustomTextField>
           </Box>
         </Box>
         <Box sx={{ mt: 5 }}>
           {isLoading ? (
             <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-              {/* <CircularProgress sx={{ mb: 4 }} /> */}
+              <CircularProgress sx={{ mb: 4 }} />
               <Typography>Loading...</Typography>
             </Box>
           ) : (
             <>
-              <TableColumns columns={columns} />
+              <TableColumns
+                paginationModel={paginationModel}
+                setPaginationModel={setPaginationModel}
+                columns={columns}
+                rows={mentees || []}
+                total={getTotal()}
+              />
             </>
           )}
         </Box>
       </Grid>
+      <AlertDialog
+        open={open}
+        setOpen={setOpen}
+        onOk={deleteUser}
+        title='Hold On!'
+        description='Are you sure you want to delete this user?'
+      />
     </Grid>
   )
 }

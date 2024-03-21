@@ -39,7 +39,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'material-symbols-light:contact-support'
     },
     {
-      path: '/setting',
+      path: '/settings',
       title: 'Settings',
       icon: 'lets-icons:setting-alt-fill'
     }
