@@ -32,24 +32,30 @@ const AssignMentorForm = ({
   const handleClose = () => setOpen(false)
 
   const assignMentor = async () => {
-    const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-    if (token) {
-      const response = await axios.patch(
-        `${BASE_URL}/admin/assign-mentor`,
-        { menteeId, mentorId: selectedMentor },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+    try {
+      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      if (token) {
+        const response = await axios.patch(
+          `${BASE_URL}/admin/assign-mentor`,
+          { menteeId, mentorId: selectedMentor },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
+        )
+        if (response?.status === 200) {
+          toast.success('Mentor assigned successfully.', {
+            duration: 2000
+          })
+          // @ts-ignore
+          getMentee(menteeId)
         }
-      )
-      if (response?.status === 200) {
-        toast.success('Mentor assigned successfully.', {
-          duration: 2000
-        })
-        // @ts-ignore
-        getMentee(menteeId)
       }
+    } catch (error: any) {
+      handleClose()
+      console.log(error)
+      toast.error(error?.response?.data?.message || '')
     }
   }
 

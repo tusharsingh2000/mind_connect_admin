@@ -59,8 +59,9 @@ const Mentees = () => {
           toast.success(`User ${statusToUpdate === 1 ? 'approved' : 'declined'}`)
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
+      toast.error(error?.response?.data?.message || '')
     }
   }
 
@@ -79,8 +80,9 @@ const Mentees = () => {
           setData(response?.data || null)
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
+      toast.error(error?.response?.data?.message || '')
     }
   }
 

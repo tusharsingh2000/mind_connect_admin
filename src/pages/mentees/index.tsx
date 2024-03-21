@@ -238,8 +238,9 @@ const Mentees = () => {
           toast.success('User deleted succesfully')
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
+      toast.error(error?.response?.data?.message || '')
     }
   }
 
@@ -275,8 +276,9 @@ const Mentees = () => {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
+      toast.error(error?.response?.data?.message || '')
     }
   }
 
