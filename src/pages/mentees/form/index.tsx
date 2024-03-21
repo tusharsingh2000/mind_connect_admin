@@ -15,7 +15,13 @@ import axios from 'axios'
 import authConfig, { BASE_URL } from 'src/configs/auth'
 import { toast } from 'react-hot-toast'
 
-const AssignMentorForm = ({ menteeId }: { menteeId: string | string[] }) => {
+const AssignMentorForm = ({
+  menteeId,
+  getMentee
+}: {
+  menteeId: string | string[]
+  getMentee: (userId: string) => void
+}) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
   const [selectedMentor, setSelectedMentor] = useState('0')
@@ -41,6 +47,8 @@ const AssignMentorForm = ({ menteeId }: { menteeId: string | string[] }) => {
         toast.success('Mentor assigned successfully.', {
           duration: 2000
         })
+        // @ts-ignore
+        getMentee(menteeId)
       }
     }
   }
@@ -112,7 +120,7 @@ const AssignMentorForm = ({ menteeId }: { menteeId: string | string[] }) => {
               >
                 Cancel
               </Button>
-              <Button fullWidth variant='contained' size='large'>
+              <Button onClick={assignMentor} fullWidth variant='contained' size='large'>
                 Assign
               </Button>
             </Box>

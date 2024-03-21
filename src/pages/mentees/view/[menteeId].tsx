@@ -162,7 +162,9 @@ const Mentees = () => {
               </Typography>
             </Box>
           )}
-          {data?.userId?.mentor ? null : <AssignMentorForm menteeId={router?.query?.menteeId || ''} />}
+          {data?.userId?.mentor ? null : (
+            <AssignMentorForm getMentee={getMentee} menteeId={router?.query?.menteeId || ''} />
+          )}
         </Box>
       </Grid>
       {data?.status === 1 ? (
@@ -187,6 +189,10 @@ const Mentees = () => {
         <Grid item xs={12} md={2} display='flex' flexDirection='column' gap={5}>
           <Button
             onClick={() => {
+              if (!data?.userId?.mentor) {
+                toast.error('Please assign a mentor first')
+                return
+              }
               setStatusToUpdate(1)
               setOpen(true)
             }}

@@ -306,12 +306,12 @@ const Sessions = () => {
             </Box>
           ) : (
             <>
-              <TableColumns
+              {/* <TableColumns
                 columns={[
                   ...columns,
                   ...otherColumns?.filter(ele => (activeTab === 'all' ? true : ele.field === activeTab))
                 ]}
-              />
+              /> */}
             </>
           )}
         </Box>

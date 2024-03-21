@@ -1,35 +1,24 @@
+'use client'
 import { Icon } from '@iconify/react'
-import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography
+} from '@mui/material'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import PDFViewer from 'src/@core/components/pdf-viewer'
 import { Mentee } from 'src/types/Mentees'
 import Questions from './Questions'
-
-const Document = ({ title }: { title: string }) => {
-  return (
-    <Box width={'50%'} display='flex' alignItems={'center'} gap={2} my={3} borderBottom='0.5px solid #7A7A7A' pb={5}>
-      <Box
-        sx={{
-          background: '#FFF3EA',
-          borderRadius: 100,
-          height: 40,
-          width: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Icon fontSize={24} color='#EA7A20' icon='system-uicons:document' />
-      </Box>
-      <Box>
-        <Typography fontSize={14} mb={1}>
-          {title}
-        </Typography>
-      </Box>
-    </Box>
-  )
-}
 
 const showIcon = (socialType: string) => {
   switch (socialType) {
@@ -84,17 +73,60 @@ const OverView = ({ data }: { data: Mentee | null }) => {
       color: string
     }[]
   >([])
+  const [open, setOpen] = useState(false)
+  const [openDoc, setOpenDoc] = useState(false)
+  const [activeUrl, setActiveUrl] = useState('')
+  const [docTitle, setDocTitle] = useState('')
+
+  const Document = ({ title, url }: { title: string; url: string }) => {
+    return (
+      <Box
+        sx={{ cursor: 'pointer' }}
+        onClick={() => {
+          setActiveUrl(url)
+          setDocTitle(title)
+          setOpenDoc(true)
+        }}
+        width={'50%'}
+        display='flex'
+        alignItems={'center'}
+        gap={2}
+        my={3}
+        borderBottom='0.5px solid #7A7A7A'
+        pb={5}
+      >
+        <Box
+          sx={{
+            background: '#FFF3EA',
+            borderRadius: 100,
+            height: 40,
+            width: 40,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Icon fontSize={24} color='#EA7A20' icon='system-uicons:document' />
+        </Box>
+        <Box>
+          <Typography fontSize={14} mb={1}>
+            {title}
+          </Typography>
+        </Box>
+      </Box>
+    )
+  }
 
   useEffect(() => {
     setCards([
       {
-        label: 'Revenue',
+        label: 'Turn Over',
         value: data?.companyInfo?.turnOver || '',
         color: '#ECF5EE'
       },
       {
-        label: 'Companies',
-        value: '1',
+        label: 'Profit',
+        value: data?.companyInfo?.profit || '',
         color: '#FDEBE9'
       },
       {
@@ -109,6 +141,10 @@ const OverView = ({ data }: { data: Mentee | null }) => {
       }
     ])
   }, [data])
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   return (
     <Grid container spacing={6} mt={4}>
@@ -199,14 +235,14 @@ const OverView = ({ data }: { data: Mentee | null }) => {
           <CardHeader title='Documents' />
           <CardContent>
             <Box display={'flex'} flexWrap='wrap'>
-              <Document title='CV' />
-              <Document title='Bussiness Plan' />
-              <Document title='E-Sign' />
-              <Document title='Vat Return' />
+              <Document url={data?.cv || ''} title='CV' />
+              <Document url={data?.businessPlan || ''} title='Bussiness Plan' />
+              <Document url={data?.eSign || ''} title='E-Sign' />
+              <Document url={data?.vatReturn || ''} title='Vat Return' />
             </Box>
           </CardContent>
           <CardActions className='card-action-dense'>
-            <Button>View All</Button>
+            <Button onClick={() => setOpen(true)}>View All</Button>
           </CardActions>
         </Card>
       </Grid>
@@ -246,6 +282,35 @@ const OverView = ({ data }: { data: Mentee | null }) => {
           </CardContent>
         </Card>
       </Grid>
+      <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
+        <DialogTitle id='form-dialog-title'>
+          <Typography fontSize={24} fontWeight={600}>
+            Documents
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Box display={'flex'} flexWrap='wrap'>
+            <Document url={data?.cv || ''} title='CV' />
+            <Document url={data?.businessPlan || ''} title='Bussiness Plan' />
+            <Document url={data?.eSign || ''} title='E-Sign' />
+            <Document url={data?.vatReturn || ''} title='Vat Return' />
+            <Document url={data?.certificateOfIncorp || ''} title='Incorporation Certification' />
+          </Box>
+          <Typography>Nominations</Typography>
+          <Box display={'flex'} flexWrap='wrap'>
+            {data?.nomination?.map((item, index) => (
+              <Document url={item || ''} key={index} title='Nomination' />
+            ))}
+          </Box>
+          <Typography>Bank Statements</Typography>
+          <Box display={'flex'} flexWrap='wrap'>
+            {data?.bankStatement?.map((item, index) => (
+              <Document url={item} key={index} title='Bank Statement' />
+            ))}
+          </Box>
+        </DialogContent>
+      </Dialog>
+      <PDFViewer open={openDoc} setOpen={setOpenDoc} title={docTitle} url={activeUrl} />
     </Grid>
   )
 }

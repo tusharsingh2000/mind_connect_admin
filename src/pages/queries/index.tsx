@@ -153,9 +153,7 @@ const Queries = () => {
               <Typography>Loading...</Typography>
             </Box>
           ) : (
-            <>
-              <TableColumns columns={columns} />
-            </>
+            <>{/* <TableColumns columns={columns} /> */}</>
           )}
         </Box>
       </Grid>
