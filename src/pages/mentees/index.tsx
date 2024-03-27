@@ -25,6 +25,8 @@ import { endOfMonth, endOfWeek, endOfYear, format, startOfMonth, startOfWeek, st
 import { Icon } from '@iconify/react'
 import { toast } from 'react-hot-toast'
 import AlertDialog from 'src/@core/components/dialog'
+import { get, patch } from 'src/utils/AxiosMethods'
+import { isValidInput } from 'src/utils/validations'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -67,7 +69,7 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
   const { row } = params
-  // const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
+
   if (row?.user?.avatar_url?.length) {
     return <CustomAvatar src={row?.user?.avatar_url || ''} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
   } else {
@@ -85,6 +87,8 @@ const Mentees = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 7 })
   const [mentees, setMentees] = useState<{ user: Mentees; status: number; aiRating: number }[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('')
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [totals, setTotals] = useState<{ all: number; approved: number; pending: number; rejected: number } | null>(
@@ -101,8 +105,9 @@ const Mentees = () => {
       headerName: 'Name',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
-          <Link href={`mentees/view/${row?._id}`} style={{ textDecoration: 'none' }}>
+          <Link href={`mentees/view/${row?.user?._id}`} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box
@@ -170,13 +175,16 @@ const Mentees = () => {
             color: 'error'
           }
         }
+
         return (
           <CustomChip
             rounded
             size='small'
             skin='light'
+
             // @ts-ignore
             color={statuses[`${params?.row?.status}`]?.color}
+
             // @ts-ignore
             label={statuses[`${params?.row?.status}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
@@ -240,45 +248,32 @@ const Mentees = () => {
       }
     } catch (error: any) {
       console.log(error)
-      toast.error(error?.response?.data?.message || '')
     }
   }
 
   const changeUserStatus = async (userId: string, status: boolean) => {
     try {
-      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (token) {
-        const response = await axios.patch(
-          `${BASE_URL}/admin/block-user/${userId}`,
-          {
-            isBlocked: status
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
+      const response = await patch(`/admin/block-user/${userId}`, {
+        isBlocked: status
+      })
+      if (response) {
+        let idx = -1
+        idx = mentees?.findIndex(ele => ele?.user?._id === userId)
+        if (idx > -1) {
+          const newArr = [...mentees]
+          newArr[idx] = {
+            ...newArr[idx],
+            user: {
+              ...newArr[idx]?.user,
+              isBlocked: status
             }
           }
-        )
-        if (response?.status === 200) {
-          let idx = -1
-          idx = mentees?.findIndex(ele => ele?.user?._id === userId)
-          if (idx > -1) {
-            let newArr = [...mentees]
-            newArr[idx] = {
-              ...newArr[idx],
-              user: {
-                ...newArr[idx]?.user,
-                isBlocked: status
-              }
-            }
-            setMentees([...newArr])
-            toast.success('User updated successfully')
-          }
+          setMentees([...newArr])
+          toast.success('User updated successfully')
         }
       }
     } catch (error: any) {
       console.log(error)
-      toast.error(error?.response?.data?.message || '')
     }
   }
 
@@ -289,24 +284,19 @@ const Mentees = () => {
 
   const getMentees = async () => {
     try {
-      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (token) {
-        setIsLoading(true)
-        const response = await axios.get(
-          `${BASE_URL}/admin/mentees?to=${to}&from=${from}&status=${activeTab}&page=${paginationModel.page + 1}&limit=${
-            paginationModel.pageSize
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-        setIsLoading(false)
-        if (response?.status === 200) {
-          setMentees(response?.data?.mentees || [])
-          setTotals(response?.data?.count || null)
-        }
+      setIsLoading(true)
+      const response = (await get(
+        `/admin/mentees?to=${to}&from=${from}&status=${activeTab}&page=${paginationModel.page + 1}&limit=${
+          paginationModel.pageSize
+        }&search=${searchTerm}`
+      )) as {
+        mentees: { user: Mentees; status: number; aiRating: number }[]
+        count: { all: number; approved: number; pending: number; rejected: number }
+      }
+      setIsLoading(false)
+      if (response) {
+        setMentees(response?.mentees || [])
+        setTotals(response?.count || null)
       }
     } catch (error) {
       console.log(error)
@@ -363,11 +353,23 @@ const Mentees = () => {
 
   useEffect(() => {
     getMentees()
-  }, [paginationModel, activeTab, to])
+  }, [paginationModel, activeTab, to, debouncedSearchTerm])
 
   return (
     <Grid container spacing={6}>
-      <PageHeader title='MENTEES' />
+      <PageHeader
+        title='MENTEES'
+        searchTerm={searchTerm}
+        setDebouncedSearchTerm={setDebouncedSearchTerm}
+        paginationModel={paginationModel}
+        setPaginationModel={setPaginationModel}
+        value={searchTerm}
+        onChange={(val: any) => {
+          if (isValidInput(val.target.value)) {
+            setSearchTerm(val.target.value)
+          }
+        }}
+      />
       <Grid item xs={12}>
         <Divider />
       </Grid>

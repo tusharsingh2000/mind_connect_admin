@@ -1,9 +1,5 @@
 import { SyntheticEvent, useState } from 'react'
 
-// ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
-
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
@@ -11,13 +7,7 @@ import Typography from '@mui/material/Typography'
 import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Divider, Rating } from '@mui/material'
-import PageHeader from 'src/@core/components/page-header'
-import TableColumns, { StatusObj } from 'src/@core/components/table'
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { ThemeColor } from 'src/@core/layouts/types'
-import { getInitials } from 'src/@core/utils/get-initials'
-import Link from 'next/link'
+import { Box, Divider } from '@mui/material'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -57,211 +47,211 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const statusObj: StatusObj = {
-  1: { title: 'accepted', color: 'primary' },
-  2: { title: 'completed', color: 'success' },
-  3: { title: 'cancelled', color: 'error' },
-  4: { title: 'pending', color: 'warning' },
-  5: { title: 'rescheduled', color: 'info' }
-}
+// const statusObj: StatusObj = {
+//   1: { title: 'accepted', color: 'primary' },
+//   2: { title: 'completed', color: 'success' },
+//   3: { title: 'cancelled', color: 'error' },
+//   4: { title: 'pending', color: 'warning' },
+//   5: { title: 'rescheduled', color: 'info' }
+// }
 
-// ** renders client column
-const renderClient = (params: GridRenderCellParams) => {
-  const { row } = params
-  const stateNum = Math.floor(Math.random() * 6)
-  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
-  const color = states[stateNum]
+// // ** renders client column
+// const renderClient = (params: GridRenderCellParams) => {
+//   const { row } = params
+//   const stateNum = Math.floor(Math.random() * 6)
+//   const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
+//   const color = states[stateNum]
 
-  if (row.avatar.length) {
-    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
-  } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={color as ThemeColor}
-        sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
-      >
-        {getInitials(row.full_name ? row.full_name : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
-}
+//   if (row.avatar.length) {
+//     return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
+//   } else {
+//     return (
+//       <CustomAvatar
+//         skin='light'
+//         color={color as ThemeColor}
+//         sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
+//       >
+//         {getInitials(row.full_name ? row.full_name : 'John Doe')}
+//       </CustomAvatar>
+//     )
+//   }
+// }
 
 const Sessions = () => {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const otherColumns: GridColDef[] = [
-    {
-      flex: 0.125,
-      minWidth: 150,
-      field: 'accepted',
-      headerName: 'Accepted',
-      renderCell: () => {
-        return <div>12/02/2024 12:24 PM</div>
-      }
-    },
-    {
-      flex: 0.125,
-      minWidth: 150,
-      field: 'completed',
-      headerName: 'Completed',
-      renderCell: () => {
-        return <div>14/02/2024 12:24 PM</div>
-      }
-    },
-    {
-      flex: 0.125,
-      minWidth: 150,
-      field: 'cancelled',
-      headerName: 'Cancelled',
-      renderCell: () => {
-        return <div>13/02/2024 12:24 PM</div>
-      }
-    },
-    {
-      flex: 0.125,
-      minWidth: 150,
-      field: 'rescheduled',
-      headerName: 'Rescheduled',
-      renderCell: () => {
-        return <div>12/02/2024 12:24 PM</div>
-      }
-    }
-  ]
+  // const otherColumns: GridColDef[] = [
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 150,
+  //     field: 'accepted',
+  //     headerName: 'Accepted',
+  //     renderCell: () => {
+  //       return <div>12/02/2024 12:24 PM</div>
+  //     }
+  //   },
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 150,
+  //     field: 'completed',
+  //     headerName: 'Completed',
+  //     renderCell: () => {
+  //       return <div>14/02/2024 12:24 PM</div>
+  //     }
+  //   },
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 150,
+  //     field: 'cancelled',
+  //     headerName: 'Cancelled',
+  //     renderCell: () => {
+  //       return <div>13/02/2024 12:24 PM</div>
+  //     }
+  //   },
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 150,
+  //     field: 'rescheduled',
+  //     headerName: 'Rescheduled',
+  //     renderCell: () => {
+  //       return <div>12/02/2024 12:24 PM</div>
+  //     }
+  //   }
+  // ]
 
-  const columns: GridColDef[] = [
-    {
-      flex: 0.175,
-      type: 'date',
-      minWidth: 120,
-      headerName: 'Date',
-      field: 'start_date',
-      valueGetter: params => new Date(params.value),
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.start_date}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.25,
-      minWidth: 260,
-      field: 'full_name',
-      headerName: 'Mentee',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params
+  // const columns: GridColDef[] = [
+  //   {
+  //     flex: 0.175,
+  //     type: 'date',
+  //     minWidth: 120,
+  //     headerName: 'Date',
+  //     field: 'start_date',
+  //     valueGetter: params => new Date(params.value),
+  //     renderCell: (params: GridRenderCellParams) => (
+  //       <Typography variant='body2' sx={{ color: 'text.primary' }}>
+  //         {params.row.start_date}
+  //       </Typography>
+  //     )
+  //   },
+  //   {
+  //     flex: 0.25,
+  //     minWidth: 260,
+  //     field: 'full_name',
+  //     headerName: 'Mentee',
+  //     renderCell: (params: GridRenderCellParams) => {
+  //       const { row } = params
 
-        return (
-          <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              {renderClient(params)}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
-                </Typography>
-                <Typography noWrap variant='caption'>
-                  {row.email}
-                </Typography>
-              </Box>
-            </Box>
-          </Link>
-        )
-      }
-    },
-    {
-      flex: 0.25,
-      minWidth: 260,
-      field: 'matched',
-      headerName: 'Mentor',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params
+  //       return (
+  //         <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
+  //           <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+  //             {renderClient(params)}
+  //             <Box
+  //               sx={{
+  //                 display: 'flex',
+  //                 flexDirection: 'column',
+  //                 '&:hover': {
+  //                   textDecoration: 'underline'
+  //                 }
+  //               }}
+  //             >
+  //               <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+  //                 {row.full_name}
+  //               </Typography>
+  //               <Typography noWrap variant='caption'>
+  //                 {row.email}
+  //               </Typography>
+  //             </Box>
+  //           </Box>
+  //         </Link>
+  //       )
+  //     }
+  //   },
+  //   {
+  //     flex: 0.25,
+  //     minWidth: 260,
+  //     field: 'matched',
+  //     headerName: 'Mentor',
+  //     renderCell: (params: GridRenderCellParams) => {
+  //       const { row } = params
 
-        return (
-          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              {renderClient(params)}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
-                </Typography>
-                <Typography noWrap variant='caption'>
-                  {row.email}
-                </Typography>
-              </Box>
-            </Box>
-          </Link>
-        )
-      }
-    },
-    {
-      flex: 0.1,
-      minWidth: 110,
-      field: 'age',
-      headerName: 'Start Time',
-      renderCell: () => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          09:00 AM
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      minWidth: 110,
-      field: 'end',
-      headerName: 'End Time',
-      renderCell: () => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          10:00 AM
-        </Typography>
-      )
-    },
-    {
-      flex: 0.125,
-      minWidth: 140,
-      field: 'status',
-      headerName: 'Status',
-      renderCell: (params: GridRenderCellParams) => {
-        const status = statusObj[params.row.status]
+  //       return (
+  //         <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
+  //           <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+  //             {renderClient(params)}
+  //             <Box
+  //               sx={{
+  //                 display: 'flex',
+  //                 flexDirection: 'column',
+  //                 '&:hover': {
+  //                   textDecoration: 'underline'
+  //                 }
+  //               }}
+  //             >
+  //               <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+  //                 {row.full_name}
+  //               </Typography>
+  //               <Typography noWrap variant='caption'>
+  //                 {row.email}
+  //               </Typography>
+  //             </Box>
+  //           </Box>
+  //         </Link>
+  //       )
+  //     }
+  //   },
+  //   {
+  //     flex: 0.1,
+  //     minWidth: 110,
+  //     field: 'age',
+  //     headerName: 'Start Time',
+  //     renderCell: () => (
+  //       <Typography variant='body2' sx={{ color: 'text.primary' }}>
+  //         09:00 AM
+  //       </Typography>
+  //     )
+  //   },
+  //   {
+  //     flex: 0.1,
+  //     minWidth: 110,
+  //     field: 'end',
+  //     headerName: 'End Time',
+  //     renderCell: () => (
+  //       <Typography variant='body2' sx={{ color: 'text.primary' }}>
+  //         10:00 AM
+  //       </Typography>
+  //     )
+  //   },
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 140,
+  //     field: 'status',
+  //     headerName: 'Status',
+  //     renderCell: (params: GridRenderCellParams) => {
+  //       const status = statusObj[params.row.status]
 
-        return (
-          <CustomChip
-            rounded
-            size='small'
-            skin='light'
-            color={status.color}
-            label={status.title}
-            sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
-          />
-        )
-      }
-    },
-    {
-      flex: 0.125,
-      minWidth: 140,
-      field: 'ratings',
-      headerName: 'Ratings',
-      renderCell: () => {
-        return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
-      }
-    }
-  ]
+  //       return (
+  //         <CustomChip
+  //           rounded
+  //           size='small'
+  //           skin='light'
+  //           color={status.color}
+  //           label={status.title}
+  //           sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
+  //         />
+  //       )
+  //     }
+  //   },
+  //   {
+  //     flex: 0.125,
+  //     minWidth: 140,
+  //     field: 'ratings',
+  //     headerName: 'Ratings',
+  //     renderCell: () => {
+  //       return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
+  //     }
+  //   }
+  // ]
 
   const handleChange = (event: SyntheticEvent, value: string) => {
     setIsLoading(false)
@@ -276,7 +266,7 @@ const Sessions = () => {
 
   return (
     <Grid container spacing={6}>
-      <PageHeader title='Sessions' />
+      {/* <PageHeader title='Sessions' /> */}
       <Grid item xs={12}>
         <Divider />
       </Grid>

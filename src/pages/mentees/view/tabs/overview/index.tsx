@@ -146,6 +146,8 @@ const OverView = ({ data }: { data: Mentee | null }) => {
     setOpen(false)
   }
 
+  console.log(activeUrl)
+
   return (
     <Grid container spacing={6} mt={4}>
       {cards?.map((item, index) => (
@@ -173,56 +175,7 @@ const OverView = ({ data }: { data: Mentee | null }) => {
           </Typography>
         </Grid>
       ))}
-      <Grid
-        sx={{
-          paddingLeft: '0px !important',
-          marginRight: 4
-        }}
-        item
-        xs={12}
-        md={5.8}
-      >
-        <Card sx={{ margin: 0 }}>
-          <CardContent>
-            <Grid container>
-              <Grid item md={6} sm={12}>
-                <Typography sx={{ color: 'text.primary' }} fontSize={18} mb={5}>
-                  Personal Info
-                </Typography>
-                <Typography sx={{ color: 'text.primary' }}>DOB</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${
-                  data?.userId?.dob ? format(new Date(data?.userId?.dob), 'dd MMMM yyyy') : ''
-                }`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>Address</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.address || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>City</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.city || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>State</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.state || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>Country</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.country || ''}`}</Typography>
-              </Grid>
-              <Grid item md={6} sm={12}>
-                <Typography sx={{ color: 'text.primary' }} fontSize={18} mb={5}>
-                  Company Info
-                </Typography>
-                <Typography sx={{ color: 'text.primary' }}>DOE</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${
-                  data?.companyInfo?.doe ? format(new Date(data?.companyInfo?.doe), 'dd MMMM yyyy') : ''
-                }`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>Address</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.address || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>City</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.city || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>State</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.state || ''}`}</Typography>
-                <Typography sx={{ color: 'text.primary' }}>Country</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.country || ''}`}</Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      </Grid>
+
       <Grid
         sx={{
           paddingLeft: '0px !important'
@@ -230,6 +183,7 @@ const OverView = ({ data }: { data: Mentee | null }) => {
         item
         xs={12}
         md={5.8}
+        mr={5}
       >
         <Card sx={{ margin: 0 }}>
           <CardHeader title='Documents' />
@@ -268,6 +222,7 @@ const OverView = ({ data }: { data: Mentee | null }) => {
           </CardContent>
         </Card>
       </Grid>
+
       <Grid
         sx={{
           paddingLeft: '0px !important'
@@ -275,12 +230,87 @@ const OverView = ({ data }: { data: Mentee | null }) => {
         item
         xs={12}
         md={5.8}
+        mr={5}
       >
         <Card sx={{ margin: 0 }}>
           <CardContent>
             <Questions questions={data?.aboutYou || []} />
           </CardContent>
         </Card>
+      </Grid>
+      <Grid
+        sx={{
+          paddingLeft: '0px !important',
+          marginRight: 4
+        }}
+        item
+        xs={12}
+        md={5.8}
+      >
+        <Grid container>
+          <Grid item sm={12}>
+            <Card sx={{ margin: 0 }}>
+              <CardContent>
+                <Typography sx={{ color: 'text.primary' }} fontSize={18} mb={5}>
+                  Personal Info
+                </Typography>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>DOB</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${
+                    data?.userId?.dob ? format(new Date(data?.userId?.dob), 'dd MMMM yyyy') : ''
+                  }`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>Address</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.address || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>City</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.city || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>State</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.state || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>Country</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.location?.country || ''}`}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item sm={12} mt={5}>
+            <Card sx={{ margin: 0 }}>
+              <CardContent>
+                <Typography sx={{ color: 'text.primary' }} fontSize={18} mb={5}>
+                  Company Info
+                </Typography>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>DOE</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${
+                    data?.companyInfo?.doe ? format(new Date(data?.companyInfo?.doe), 'dd MMMM yyyy') : ''
+                  }`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>Address</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.address || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>City</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.city || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>State</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.state || ''}`}</Typography>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <Typography sx={{ color: 'text.primary' }}>Country</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{`${data?.companyLocation?.country || ''}`}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Grid>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
@@ -310,7 +340,7 @@ const OverView = ({ data }: { data: Mentee | null }) => {
           </Box>
         </DialogContent>
       </Dialog>
-      <PDFViewer open={openDoc} setOpen={setOpenDoc} title={docTitle} url={activeUrl} />
+      <PDFViewer open={openDoc} setOpen={setOpenDoc} title={docTitle} url={[activeUrl as any]} />
     </Grid>
   )
 }

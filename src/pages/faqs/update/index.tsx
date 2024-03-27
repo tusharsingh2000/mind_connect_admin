@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -16,28 +16,29 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { post } from 'src/utils/AxiosMethods'
+import { patch } from 'src/utils/AxiosMethods'
 import { toast } from 'react-hot-toast'
+import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
-  heading: yup.string().required('Heading is a required field'),
-  description: yup.string().required('Description is a required field'),
-  type: yup.string().required().not(['-1'], 'Type is a required field')
+  question: yup.string().required('Question is a required field'),
+  answer: yup.string().required('Answer is a required field'),
+  type: yup.string().required().not(['no'], 'Type is a required field')
 })
 
 const defaultValues = {
-  description: '',
-  heading: '',
-  type: -1
+  answer: '',
+  question: '',
+  type: 'no'
 }
 
 interface FormData {
-  heading: string
-  description: string
-  type: number
+  question: string
+  answer: string
+  type: string
 }
 
-const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
+const UpdateFaqForm = ({ id, data, refetch }: { id: string; data: FormData; refetch: () => {} }) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
@@ -48,6 +49,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
   const {
     control,
     resetField,
+    setValue,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -58,11 +60,11 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await post('/admin/instruction', { ...data, type: Number(data.type) })
+      const response = await patch(`/admin/faq/${id}`, data)
       if (response) {
-        toast.success(`${Number(data.type) === 0 ? `Do's` : `Don's`} added successfully`)
-        resetField('heading')
-        resetField('description')
+        toast.success('Faq updated successfully')
+        resetField('answer')
+        resetField('question')
         resetField('type')
         handleClose()
         refetch()
@@ -72,15 +74,21 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
     }
   }
 
+  useEffect(() => {
+    setValue('answer', data?.answer || '')
+    setValue('question', data?.question || '')
+    setValue('type', data?.type || '')
+  }, [open])
+
   return (
     <Fragment>
-      <Button variant='outlined' size='medium' onClick={handleClickOpen}>
-        + Add Do's & Don's
+      <Button onClick={handleClickOpen}>
+        <Icon fontSize={20} icon='carbon:edit' />
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
           <Typography fontSize={24} fontWeight={600}>
-            Do's & Don's
+            FAQ
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -104,51 +112,51 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                       error={Boolean(errors.type)}
                       {...(errors.type && { helperText: errors.type.message })}
                     >
-                      <MenuItem disabled value={-1}>
+                      <MenuItem disabled value={'no'}>
                         Select
                       </MenuItem>
-                      <MenuItem value={0}>Do</MenuItem>
-                      <MenuItem value={1}>Don</MenuItem>
+                      <MenuItem value={'MENTOR'}>Mentor</MenuItem>
+                      <MenuItem value={'MENTEE'}>Mentee</MenuItem>
                     </CustomTextField>
                   )}
                 />
               </Box>
               <Box>
                 <Controller
-                  name='heading'
+                  name='question'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
-                      label='Add Heading'
+                      label='Update Question'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      placeholder='Heading'
+                      placeholder='Question'
                       variant='standard'
-                      error={Boolean(errors.heading)}
-                      {...(errors.heading && { helperText: errors.heading.message })}
+                      error={Boolean(errors.question)}
+                      {...(errors.question && { helperText: errors.question.message })}
                     />
                   )}
                 />
               </Box>
               <Box>
                 <Controller
-                  name='description'
+                  name='answer'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
-                      label='Add Description'
+                      label='Update Answer'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      placeholder='Description'
+                      placeholder='Answer'
                       variant='standard'
-                      error={Boolean(errors.description)}
-                      {...(errors.description && { helperText: errors.description.message })}
+                      error={Boolean(errors.answer)}
+                      {...(errors.answer && { helperText: errors.answer.message })}
                     />
                   )}
                 />
@@ -159,7 +167,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                   Cancel
                 </Button>
                 <Button type='submit' fullWidth variant='contained' size='large'>
-                  Add
+                  Update
                 </Button>
               </Box>
             </Box>
@@ -170,4 +178,4 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
   )
 }
 
-export default AddDosForm
+export default UpdateFaqForm

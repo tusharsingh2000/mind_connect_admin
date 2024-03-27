@@ -1,45 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
+import CustomChip from 'src/@core/components/mui/chip'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { Box, Divider } from '@mui/material'
-import PageHeader from 'src/@core/components/page-header'
-import TableColumns, { StatusObj } from 'src/@core/components/table'
+import { get } from 'src/utils/AxiosMethods'
+import { QUERY } from 'src/types/General'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
-import Link from 'next/link'
-
-const statusObj: StatusObj = {
-  1: { title: 'accepted', color: 'primary' },
-  2: { title: 'completed', color: 'success' },
-  3: { title: 'cancelled', color: 'error' },
-  4: { title: 'pending', color: 'warning' },
-  5: { title: 'rescheduled', color: 'info' }
-}
+import TableColumns from 'src/@core/components/table'
+import { isValidInput } from 'src/utils/validations'
+import PageHeader from 'src/@core/components/page-header'
 
 // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
   const { row } = params
-  const stateNum = Math.floor(Math.random() * 6)
-  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
-  const color = states[stateNum]
 
-  if (row.avatar.length) {
-    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
+  if (row?.userId?.avatar_url?.length) {
+    return <CustomAvatar src={row?.userId?.avatar_url || ''} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
   } else {
     return (
-      <CustomAvatar
-        skin='light'
-        color={color as ThemeColor}
-        sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
-      >
-        {getInitials(row.full_name ? row.full_name : 'John Doe')}
+      <CustomAvatar skin='light' sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}>
+        {getInitials(`${row?.userId?.firsName || 'P'} ${row?.userId?.firsName || 'V'}`)}
       </CustomAvatar>
     )
   }
@@ -47,6 +33,34 @@ const renderClient = (params: GridRenderCellParams) => {
 
 const Queries = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [queries, setQueries] = useState<QUERY[]>([])
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 7 })
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('')
+  const [totalCount, setTotalCount] = useState<number>(0)
+
+  const getQueries = async () => {
+    try {
+      setIsLoading(true)
+      const response = (await get(
+        `/admin/contact-support?page=${paginationModel.page + 1}&limit=${paginationModel.pageSize}&search=${searchTerm}`
+      )) as {
+        contactSupport: QUERY[]
+        supportCount: number
+      }
+      setIsLoading(false)
+      if (response) {
+        setQueries(response?.contactSupport || [])
+        setTotalCount(response?.supportCount || 0)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getQueries()
+  }, [paginationModel, debouncedSearchTerm])
 
   const columns: GridColDef[] = [
     {
@@ -58,27 +72,55 @@ const Queries = () => {
         const { row } = params
 
         return (
-          <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              {renderClient(params)}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                  {row.full_name}
-                </Typography>
-                <Typography noWrap variant='caption'>
-                  {row.email}
-                </Typography>
-              </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            {renderClient(params)}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                '&:hover': {
+                  textDecoration: 'underline'
+                }
+              }}
+            >
+              <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+                {`${row?.userId?.firstName || ''} ${row?.userId?.lastName || ''}`}
+              </Typography>
+              <Typography noWrap variant='caption'>
+                {row?.userId?.email || ''}
+              </Typography>
             </Box>
-          </Link>
+          </Box>
+        )
+      }
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      field: 'contact_name',
+      headerName: 'Contact Name',
+      renderCell: (params: GridRenderCellParams) => {
+        const { row } = params
+
+        return (
+          <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+            {`${row?.name || ''}`}
+          </Typography>
+        )
+      }
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      field: 'contact_email',
+      headerName: 'Contact Email',
+      renderCell: (params: GridRenderCellParams) => {
+        const { row } = params
+
+        return (
+          <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+            {`${row?.email || ''}`}
+          </Typography>
         )
       }
     },
@@ -88,58 +130,76 @@ const Queries = () => {
       headerAlign: 'center',
       field: 'age',
       headerName: 'Query',
-      renderCell: () => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
-          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-          PageMaker including versions of Lorem Ipsum.
-        </Typography>
-      )
+      renderCell: (params: GridRenderCellParams) => {
+        const { row } = params
+
+        return (
+          <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+            {`${row?.message || ''}`}
+          </Typography>
+        )
+      }
     },
     {
-      flex: 0.1,
-      minWidth: 60,
+      flex: 0.125,
+      minWidth: 140,
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const status = statusObj[params.row.status]
+        const statuses = {
+          1: {
+            label: 'In Progress',
+            color: 'primary'
+          },
+          0: {
+            label: 'Pending',
+            color: 'info'
+          },
+          2: {
+            label: 'Completed',
+            color: 'success'
+          },
+          3: {
+            label: 'Closed',
+            color: 'error'
+          },
+          4: {
+            label: 'On Hold',
+            color: 'secondary'
+          }
+        }
 
         return (
           <CustomChip
             rounded
             size='small'
             skin='light'
-            color={status.color}
-            label={status.title}
+            // @ts-ignore
+            color={statuses[`${params?.row?.action}`]?.color}
+            // @ts-ignore
+            label={statuses[`${params?.row?.action}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
       }
-    },
-    {
-      flex: 0.2,
-      minWidth: 140,
-      field: 'ratings',
-      headerName: 'Notes',
-      renderCell: () => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
-          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-          PageMaker including versions of Lorem Ipsum.
-        </Typography>
-      )
     }
   ]
 
   return (
     <Grid container spacing={6}>
-      <PageHeader title='Queries' />
+      <PageHeader
+        title='Queries'
+        searchTerm={searchTerm}
+        setDebouncedSearchTerm={setDebouncedSearchTerm}
+        paginationModel={paginationModel}
+        setPaginationModel={setPaginationModel}
+        value={searchTerm}
+        onChange={(val: any) => {
+          if (isValidInput(val.target.value)) {
+            setSearchTerm(val.target.value)
+          }
+        }}
+      />
       <Grid item xs={12}>
         <Divider />
       </Grid>
@@ -153,7 +213,13 @@ const Queries = () => {
               <Typography>Loading...</Typography>
             </Box>
           ) : (
-            <>{/* <TableColumns columns={columns} /> */}</>
+            <TableColumns
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              columns={columns}
+              rows={queries || []}
+              total={totalCount}
+            />
           )}
         </Box>
       </Grid>

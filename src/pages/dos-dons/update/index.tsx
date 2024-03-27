@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -16,8 +16,9 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { post } from 'src/utils/AxiosMethods'
+import { patch } from 'src/utils/AxiosMethods'
 import { toast } from 'react-hot-toast'
+import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
   heading: yup.string().required('Heading is a required field'),
@@ -37,7 +38,7 @@ interface FormData {
   type: number
 }
 
-const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
+const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refetch: () => {} }) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
@@ -48,6 +49,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
   const {
     control,
     resetField,
+    setValue,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -58,9 +60,9 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await post('/admin/instruction', { ...data, type: Number(data.type) })
+      const response = await patch(`/admin/instruction/${id}`, { ...data, type: Number(data.type) })
       if (response) {
-        toast.success(`${Number(data.type) === 0 ? `Do's` : `Don's`} added successfully`)
+        toast.success(`${Number(data.type) === 0 ? `Do's` : `Don's`} updated successfully`)
         resetField('heading')
         resetField('description')
         resetField('type')
@@ -72,10 +74,16 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
     }
   }
 
+  useEffect(() => {
+    setValue('heading', data?.heading || '')
+    setValue('description', data?.description || '')
+    setValue('type', data?.type || 0)
+  }, [open])
+
   return (
     <Fragment>
-      <Button variant='outlined' size='medium' onClick={handleClickOpen}>
-        + Add Do's & Don's
+      <Button onClick={handleClickOpen}>
+        <Icon fontSize={20} icon='carbon:edit' />
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
@@ -121,7 +129,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
-                      label='Add Heading'
+                      label='Update Heading'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -141,7 +149,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
-                      label='Add Description'
+                      label='Update Description'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -159,7 +167,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                   Cancel
                 </Button>
                 <Button type='submit' fullWidth variant='contained' size='large'>
-                  Add
+                  Update
                 </Button>
               </Box>
             </Box>
@@ -170,4 +178,4 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
   )
 }
 
-export default AddDosForm
+export default UpdateDosForm

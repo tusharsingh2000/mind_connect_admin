@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -7,10 +7,15 @@ import Typography from '@mui/material/Typography'
 import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Button, Divider } from '@mui/material'
+import { Box, Button, CircularProgress, Divider } from '@mui/material'
 import AddFaqForm from './form'
 import TabPanel from '@mui/lab/TabPanel'
 import { Icon } from '@iconify/react'
+import { del, get } from 'src/utils/AxiosMethods'
+import { FAQ } from 'src/types/General'
+import UpdateFaqForm from './update'
+import AlertDialog from 'src/@core/components/dialog'
+import { toast } from 'react-hot-toast'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -50,80 +55,69 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const dos = [
-  {
-    heading: 'Be on time',
-    description: 'Be punctual and show respect to your mentor.'
-  },
-  {
-    heading: 'Research the Program',
-    description:
-      "Understand the mentorship program's goals, values, and requirements. Tailor your application to align with these aspects ."
-  },
-  {
-    heading: 'Be Professional',
-    description: 'Use a professional tone with your Mentor'
-  },
-  {
-    heading: 'Show Initiative',
-    description: 'Proactively communicate how you plan to make the most out of the mentorship.'
-  },
-  {
-    heading: 'Express Genuine Interest',
-    description: 'Demonstrate a sincere passion for the field or area in which you are seeking mentorship.'
-  }
-]
-
-const dons = [
-  {
-    heading: 'Avoid Generic Statements',
-    description: 'Steer clear of generic statements that could apply to anyone.'
-  },
-  {
-    heading: `Don't Exaggerate`,
-    description: "While it's important to present your strengths, avoid exaggerating"
-  },
-  {
-    heading: `Don't Skip Instructions`,
-    description: 'Follow the application instructions carefully.'
-  },
-  {
-    heading: `Don't ask for money`,
-    description: `Don't ask money from your mentor while getting mentorship.`
-  }
-]
-
 const FAQs = () => {
-  const [activeTab, setActiveTab] = useState<string>('mentor')
+  const [activeTab, setActiveTab] = useState<string>('MENTOR')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [selectedItem, setSelectedItem] = useState<string>('')
 
-  const handleChange = (event: SyntheticEvent, value: string) => {
-    setIsLoading(false)
-    setActiveTab(value)
-
-    // router
-    //   .push({
-    //     pathname: `/apps/user/view/${value.toLowerCase()}`
-    //   })
-    //   .then(() => setIsLoading(false))
-  }
-
-  const Faq = ({ faq }: { faq: { heading: string; description: string } }) => {
+  const Faq = ({ faq }: { faq: FAQ }) => {
     return (
       <Box display={'flex'} alignItems='center' gap={5} mb={2}>
         <Box width={600}>
-          <Typography fontWeight={700} sx={{ marginRight: '8px' }}>{`${faq.heading}:`}</Typography>
-          <Typography fontSize={14}>{`${faq.description}`}</Typography>
+          <Typography fontWeight={700} sx={{ marginRight: '8px' }}>{`${faq?.question || ''}:`}</Typography>
+          <Typography fontSize={14}>{`${faq?.answer || ''}`}</Typography>
         </Box>
-        <Button>
-          <Icon fontSize={20} icon='carbon:edit' />
-        </Button>
-        <Button>
+        <UpdateFaqForm refetch={getFaqs} data={faq} id={faq?._id} />
+        <Button
+          onClick={() => {
+            setSelectedItem(faq?._id)
+            setOpen(true)
+          }}
+        >
           <Icon fontSize={20} icon='mdi:delete' />
         </Button>
       </Box>
     )
   }
+
+  const handleChange = (event: SyntheticEvent, value: string) => {
+    setIsLoading(false)
+    setActiveTab(value)
+  }
+
+  const deleteFaq = async () => {
+    try {
+      const response = await del(`/admin/faq/${selectedItem}`)
+      if (response) {
+        toast.success('Deleted Successfully')
+        setOpen(false)
+        getFaqs()
+      }
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  const getFaqs = async () => {
+    try {
+      setIsLoading(true)
+      const response = (await get(`/admin/faq?type=${activeTab}`)) as FAQ[]
+      setIsLoading(false)
+      if (response) {
+        setFaqs(response || [])
+      }
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getFaqs()
+  }, [activeTab])
 
   return (
     <Grid container spacing={6}>
@@ -132,7 +126,7 @@ const FAQs = () => {
           <Typography fontSize={32} fontWeight={700}>
             FAQs
           </Typography>
-          <AddFaqForm />
+          <AddFaqForm refetch={getFaqs} />
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -147,38 +141,47 @@ const FAQs = () => {
             aria-label='forced scroll tabs example'
             sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
           >
-            <Tab value='mentor' label={'Mentor'} />
-            <Tab value='mentee' label={'Mentee'} />
+            <Tab value='MENTOR' label={'Mentor'} />
+            <Tab value='MENTEE' label={'Mentee'} />
           </TabList>
           <Box sx={{ mt: 5 }}>
             {isLoading ? (
               <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                {/* <CircularProgress sx={{ mb: 4 }} /> */}
+                <CircularProgress sx={{ mb: 4 }} />
                 <Typography>Loading...</Typography>
               </Box>
             ) : (
               <>
-                <TabPanel value='mentor'>
+                <TabPanel value='MENTOR'>
                   <Typography fontSize={28} fontWeight={700}>
                     Mentor
                   </Typography>
-                  {dos?.map((item, index) => (
-                    <Faq key={index} faq={item} />
-                  ))}
                 </TabPanel>
-                <TabPanel value='mentee'>
+                <TabPanel value='MENTEE'>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
                     Mentee
                   </Typography>
-                  {dons?.map((item, index) => (
-                    <Faq key={index} faq={item} />
-                  ))}
                 </TabPanel>
+
+                {faqs?.length ? (
+                  faqs?.map((item, index) => <Faq key={item?._id || index} faq={item} />)
+                ) : (
+                  <Typography fontSize={14} m={5}>
+                    No data found
+                  </Typography>
+                )}
               </>
             )}
           </Box>
         </TabContext>
       </Grid>
+      <AlertDialog
+        open={open}
+        setOpen={setOpen}
+        onOk={deleteFaq}
+        title='Hold On!'
+        description='Are you sure you want to delete this faq?'
+      />
     </Grid>
   )
 }

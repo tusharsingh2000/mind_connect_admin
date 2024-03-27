@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 // ** MUI Imports
 import { Icon } from '@iconify/react'
 import { Box, InputAdornment, Typography } from '@mui/material'
@@ -9,7 +11,23 @@ import { PageHeaderProps } from './types'
 
 const PageHeader = (props: PageHeaderProps) => {
   // ** Props
-  const { title, subtitle } = props
+  const { title, subtitle, searchTerm, setDebouncedSearchTerm, onChange, paginationModel, setPaginationModel, value } =
+    props
+
+  useEffect(() => {
+    const delay = 1000 // Debounce delay in milliseconds
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+      setPaginationModel({
+        page: 0,
+        pageSize: paginationModel.pageSize
+      })
+    }, delay)
+
+    return () => {
+      clearTimeout(timerId) // Clear the timeout on cleanup
+    }
+  }, [searchTerm])
 
   return (
     <Grid margin='2px 5px' container spacing={6}>
@@ -23,6 +41,8 @@ const PageHeader = (props: PageHeaderProps) => {
         <CustomTextField
           id='icons-start-adornment'
           fullWidth
+          value={value}
+          onChange={onChange}
           placeholder='Search...'
           InputProps={{
             startAdornment: (

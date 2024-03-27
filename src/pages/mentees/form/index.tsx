@@ -11,9 +11,9 @@ import DialogContent from '@mui/material/DialogContent'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
 import { MenuItem, Typography } from '@mui/material'
-import axios from 'axios'
-import authConfig, { BASE_URL } from 'src/configs/auth'
+import { BASE_URL } from 'src/configs/auth'
 import { toast } from 'react-hot-toast'
+import { get, patch } from 'src/utils/AxiosMethods'
 
 const AssignMentorForm = ({
   menteeId,
@@ -33,43 +33,34 @@ const AssignMentorForm = ({
 
   const assignMentor = async () => {
     try {
-      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (token) {
-        const response = await axios.patch(
-          `${BASE_URL}/admin/assign-mentor`,
-          { menteeId, mentorId: selectedMentor },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-        if (response?.status === 200) {
-          toast.success('Mentor assigned successfully.', {
-            duration: 2000
-          })
-          // @ts-ignore
-          getMentee(menteeId)
-        }
+      const response = await patch(`${BASE_URL}/admin/assign-mentor`, { menteeId, mentorId: selectedMentor })
+      if (response) {
+        toast.success('Mentor assigned successfully.', {
+          duration: 2000
+        })
+
+        // @ts-ignore
+        getMentee(menteeId)
       }
     } catch (error: any) {
       handleClose()
       console.log(error)
-      toast.error(error?.response?.data?.message || '')
     }
   }
 
   const getMentors = async () => {
-    const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-    if (token) {
-      const response = await axios.get(`${BASE_URL}/admin/mentors`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      if (response?.status === 200) {
-        setMentors(response?.data || [])
+    try {
+      const response = (await get(`${BASE_URL}/admin/mentors`)) as {
+        email: string
+        firstName: string
+        lastName: string
+        _id: string
+      }[]
+      if (response) {
+        setMentors(response || [])
       }
+    } catch (error) {
+      console.log(error)
     }
   }
 

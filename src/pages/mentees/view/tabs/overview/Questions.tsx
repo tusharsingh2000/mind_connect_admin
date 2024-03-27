@@ -88,7 +88,9 @@ const Questions = ({
             expandIcon={expandIcon(index)}
             aria-controls='customized-panel-content-1'
           >
-            <Typography>{item?.qus || ''}</Typography>
+            <Typography>
+              <b>{item?.qus || ''}</b>
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography>{item?.answer || ''}</Typography>

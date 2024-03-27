@@ -40,6 +40,7 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const userData = window.localStorage.getItem('userData')
+
       // if (storedToken) {
       //   setLoading(true)
       //   await axios
@@ -70,6 +71,7 @@ const AuthProvider = ({ children }: Props) => {
         // setUser({ ...response.data.userData })
       }
       setLoading(false)
+
       // }
     }
 
@@ -82,9 +84,7 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(`${BASE_URL}/auth/admin/login`, params)
       .then(async response => {
-        // params.rememberMe
         window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
-        // : null
         const returnUrl = router.query.returnUrl
 
         setUser({ ...response.data.user })

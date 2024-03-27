@@ -19,6 +19,7 @@ import axios from 'axios'
 import { Mentee } from 'src/types/Mentees'
 import AlertDialog from 'src/@core/components/dialog'
 import { toast } from 'react-hot-toast'
+import { get } from 'src/utils/AxiosMethods'
 
 const Mentees = () => {
   const [value, setValue] = useState<string>('1')
@@ -67,18 +68,11 @@ const Mentees = () => {
 
   const getMentee = async (menteeId: string) => {
     try {
-      const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (token) {
-        setIsLoading(true)
-        const response = await axios.get(`${BASE_URL}/admin/mentee/${menteeId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        setIsLoading(false)
-        if (response?.status === 200) {
-          setData(response?.data || null)
-        }
+      setIsLoading(true)
+      const response = (await get(`/admin/mentee/${menteeId}`)) as Mentee
+      setIsLoading(false)
+      if (response) {
+        setData(response || null)
       }
     } catch (error: any) {
       console.log(error)
@@ -193,6 +187,7 @@ const Mentees = () => {
             onClick={() => {
               if (!data?.userId?.mentor) {
                 toast.error('Please assign a mentor first')
+
                 return
               }
               setStatusToUpdate(1)

@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -11,6 +11,11 @@ import { Box, Button, Divider } from '@mui/material'
 import AddDosForm from './form'
 import TabPanel from '@mui/lab/TabPanel'
 import { Icon } from '@iconify/react'
+import { del, get } from 'src/utils/AxiosMethods'
+import { DODON } from 'src/types/General'
+import UpdateDosForm from './update'
+import AlertDialog from 'src/@core/components/dialog'
+import { toast } from 'react-hot-toast'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -50,75 +55,65 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const dos = [
-  {
-    heading: 'Be on time',
-    description: 'Be punctual and show respect to your mentor.'
-  },
-  {
-    heading: 'Research the Program',
-    description:
-      "Understand the mentorship program's goals, values, and requirements. Tailor your application to align with these aspects ."
-  },
-  {
-    heading: 'Be Professional',
-    description: 'Use a professional tone with your Mentor'
-  },
-  {
-    heading: 'Show Initiative',
-    description: 'Proactively communicate how you plan to make the most out of the mentorship.'
-  },
-  {
-    heading: 'Express Genuine Interest',
-    description: 'Demonstrate a sincere passion for the field or area in which you are seeking mentorship.'
-  }
-]
-
-const dons = [
-  {
-    heading: 'Avoid Generic Statements',
-    description: 'Steer clear of generic statements that could apply to anyone.'
-  },
-  {
-    heading: `Don't Exaggerate`,
-    description: "While it's important to present your strengths, avoid exaggerating"
-  },
-  {
-    heading: `Don't Skip Instructions`,
-    description: 'Follow the application instructions carefully.'
-  },
-  {
-    heading: `Don't ask for money`,
-    description: `Don't ask money from your mentor while getting mentorship.`
-  }
-]
-
 const DosNDons = () => {
-  const [activeTab, setActiveTab] = useState<string>('dos')
+  const [activeTab, setActiveTab] = useState<string>('0')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const [list, setList] = useState<DODON[]>([])
+  const [selectedItem, setSelectedItem] = useState<string>('')
 
   const handleChange = (event: SyntheticEvent, value: string) => {
     setIsLoading(false)
     setActiveTab(value)
-
-    // router
-    //   .push({
-    //     pathname: `/apps/user/view/${value.toLowerCase()}`
-    //   })
-    //   .then(() => setIsLoading(false))
   }
 
-  const DoDo = ({ dodo }: { dodo: { heading: string; description: string } }) => {
+  const deleteDoDons = async () => {
+    try {
+      const response = await del(`/admin/instruction/${selectedItem}`)
+      if (response) {
+        toast.success('Deleted Successfully')
+        setOpen(false)
+        getDoDons()
+      }
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  const getDoDons = async () => {
+    try {
+      setIsLoading(true)
+      const response = (await get(`/admin/instruction/${activeTab}`)) as DODON[]
+
+      setIsLoading(false)
+      if (response) {
+        setList(response || [])
+      }
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getDoDons()
+  }, [activeTab])
+
+  const DoDo = ({ dodo }: { dodo: DODON }) => {
     return (
       <Box display={'flex'} alignItems='center' gap={5} mb={2}>
         <Typography component='div' fontSize={14} width={500}>
           <Typography component='span' fontWeight={700} sx={{ marginRight: '8px' }}>{`${dodo.heading}:`}</Typography>
           <Typography component='span' fontSize={14}>{`${dodo.description}`}</Typography>
         </Typography>
-        <Button>
-          <Icon fontSize={20} icon='carbon:edit' />
-        </Button>
-        <Button>
+        <UpdateDosForm id={dodo?._id} data={dodo} refetch={getDoDons} />
+        <Button
+          onClick={() => {
+            setSelectedItem(dodo?._id)
+            setOpen(true)
+          }}
+        >
           <Icon fontSize={20} icon='mdi:delete' />
         </Button>
       </Box>
@@ -132,7 +127,7 @@ const DosNDons = () => {
           <Typography fontSize={32} fontWeight={700}>
             Do's & Don's
           </Typography>
-          <AddDosForm />
+          <AddDosForm refetch={getDoDons} />
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -147,8 +142,8 @@ const DosNDons = () => {
             aria-label='forced scroll tabs example'
             sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
           >
-            <Tab value='dos' label={`Do's`} />
-            <Tab value='dons' label={`Don's`} />
+            <Tab value='0' label={`Do's`} />
+            <Tab value='1' label={`Don's`} />
           </TabList>
           <Box sx={{ mt: 5 }}>
             {isLoading ? (
@@ -158,27 +153,35 @@ const DosNDons = () => {
               </Box>
             ) : (
               <>
-                <TabPanel value='dos'>
+                <TabPanel value='0'>
                   <Typography fontSize={28} fontWeight={700}>
                     Do's
                   </Typography>
-                  {dos?.map((item, index) => (
-                    <DoDo key={index} dodo={item} />
-                  ))}
                 </TabPanel>
-                <TabPanel value='dons'>
+                <TabPanel value='1'>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
                     Don's
                   </Typography>
-                  {dons?.map((item, index) => (
-                    <DoDo key={index} dodo={item} />
-                  ))}
                 </TabPanel>
+                {list?.length ? (
+                  list?.map((item, index) => <DoDo key={index} dodo={item} />)
+                ) : (
+                  <Typography fontSize={14} m={5}>
+                    No data found
+                  </Typography>
+                )}
               </>
             )}
           </Box>
         </TabContext>
       </Grid>
+      <AlertDialog
+        open={open}
+        setOpen={setOpen}
+        onOk={deleteDoDons}
+        title='Hold On!'
+        description='Are you sure you want to delete this item?'
+      />
     </Grid>
   )
 }

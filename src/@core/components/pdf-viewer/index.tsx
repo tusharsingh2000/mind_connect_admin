@@ -1,9 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import React, { Dispatch, SetStateAction } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
-
-// Configure the PDF.js worker path
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+import DocViewer, { DocViewerRenderers, IDocument } from 'react-doc-viewer'
 
 const PDFViewer = ({
   url,
@@ -11,7 +8,7 @@ const PDFViewer = ({
   open,
   setOpen
 }: {
-  url: string
+  url: IDocument[]
   title: string
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -25,9 +22,7 @@ const PDFViewer = ({
     <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
     <DialogContent>
       <div style={{ width: '100%', minWidth: '30vw', height: '600px' }}>
-        <Document file={url}>
-          <Page pageNumber={1} />
-        </Document>
+        <DocViewer pluginRenderers={DocViewerRenderers} documents={url} />
       </div>
     </DialogContent>
   </Dialog>
