@@ -7,7 +7,7 @@ import CustomChip from 'src/@core/components/mui/chip'
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import { Box, Divider } from '@mui/material'
+import { Box, Button, Divider } from '@mui/material'
 import { get } from 'src/utils/AxiosMethods'
 import { QUERY } from 'src/types/General'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -15,6 +15,7 @@ import { getInitials } from 'src/@core/utils/get-initials'
 import TableColumns from 'src/@core/components/table'
 import { isValidInput } from 'src/utils/validations'
 import PageHeader from 'src/@core/components/page-header'
+import UpdateQuery from './update'
 
 // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
@@ -181,6 +182,15 @@ const Queries = () => {
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
+      }
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      field: 'action',
+      headerName: 'Action',
+      renderCell: (params: GridRenderCellParams) => {
+        return <UpdateQuery id={params?.row?._id || ''} status={params?.row?.action || '0'} refetch={getQueries} />
       }
     }
   ]

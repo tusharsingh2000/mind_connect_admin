@@ -4,6 +4,7 @@ export type PageHeaderProps = {
   title: ReactNode
   subtitle?: ReactNode
   value?: string
+  hide?: boolean
   onChange?: any
   onCross?: () => void
   searchTerm: string

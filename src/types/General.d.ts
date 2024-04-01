@@ -27,3 +27,48 @@ export type QUERY = {
   }
   createdAt: string
 }
+
+export type SESSIONS = {
+  bookingNo: number
+  sessionNo: number
+  recording: {
+    isRecording: false
+    members: number
+  }
+  _id: string
+  bookingDate: string
+  bookingTimeStart: string
+  bookingTimeEnd: string
+  status: number
+  isRescheduled: false
+  mentor: {
+    _id: string
+    firstName: string
+    lastName: string
+    email: string
+    role: string
+    avatar_url: string
+  }
+  user: {
+    _id: string
+    firstName: string
+    lastName: string
+    email: string
+    role: string
+    avatar_url: string
+  }
+  recording: {
+    isRecording: boolean
+    members: number
+    recordingUrl: string
+    resourceId: string
+    sid: string
+    userJoinAt: string
+    mentorLeaveAt: string
+    userLeaveAt: string
+  }
+  createdAt: string
+  updatedAt: string
+  __v: 0
+  acceptedAt: string
+}

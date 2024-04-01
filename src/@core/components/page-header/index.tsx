@@ -11,8 +11,17 @@ import { PageHeaderProps } from './types'
 
 const PageHeader = (props: PageHeaderProps) => {
   // ** Props
-  const { title, subtitle, searchTerm, setDebouncedSearchTerm, onChange, paginationModel, setPaginationModel, value } =
-    props
+  const {
+    title,
+    subtitle,
+    searchTerm,
+    setDebouncedSearchTerm,
+    onChange,
+    paginationModel,
+    setPaginationModel,
+    value,
+    hide
+  } = props
 
   useEffect(() => {
     const delay = 1000 // Debounce delay in milliseconds
@@ -41,6 +50,7 @@ const PageHeader = (props: PageHeaderProps) => {
         <CustomTextField
           id='icons-start-adornment'
           fullWidth
+          style={{ visibility: hide ? 'hidden' : 'visible' }}
           value={value}
           onChange={onChange}
           placeholder='Search...'

@@ -152,12 +152,12 @@ const FAQs = () => {
               </Box>
             ) : (
               <>
-                <TabPanel value='MENTOR'>
+                <TabPanel value='MENTOR' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700}>
                     Mentor
                   </Typography>
                 </TabPanel>
-                <TabPanel value='MENTEE'>
+                <TabPanel value='MENTEE' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
                     Mentee
                   </Typography>

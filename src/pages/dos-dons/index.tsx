@@ -153,12 +153,12 @@ const DosNDons = () => {
               </Box>
             ) : (
               <>
-                <TabPanel value='0'>
+                <TabPanel value='0' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700}>
                     Do's
                   </Typography>
                 </TabPanel>
-                <TabPanel value='1'>
+                <TabPanel value='1' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
                     Don's
                   </Typography>

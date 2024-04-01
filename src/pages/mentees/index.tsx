@@ -181,10 +181,8 @@ const Mentees = () => {
             rounded
             size='small'
             skin='light'
-
             // @ts-ignore
             color={statuses[`${params?.row?.status}`]?.color}
-
             // @ts-ignore
             label={statuses[`${params?.row?.status}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
@@ -244,6 +242,7 @@ const Mentees = () => {
         setIsLoading(false)
         if (response?.status === 200) {
           toast.success('User deleted succesfully')
+          getMentees()
         }
       }
     } catch (error: any) {
