@@ -145,7 +145,7 @@ const Mentors = () => {
         const { row } = params
 
         return (
-          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
+          <Link href={`mentors/view/${row?._id}`} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box
@@ -201,34 +201,15 @@ const Mentors = () => {
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const statuses = {
-          1: {
-            label: 'Matched',
-            color: 'success'
-          },
-          2: {
-            label: 'Un Matched',
-            color: 'error'
-          },
-          3: {
-            label: 'Invited',
-            color: 'info'
-          },
-          4: {
-            label: 'Inactive',
-            color: 'warning'
-          }
-        }
-
         return (
           <CustomChip
             rounded
             size='small'
             skin='light'
             // @ts-ignore
-            color={statuses[`${params?.row?.status}`]?.color}
+            color={params.row.active ? 'success' : 'error'}
             // @ts-ignore
-            label={statuses[`${params?.row?.status}`]?.label}
+            label={params.row.active ? 'Active' : 'Inactive'}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
@@ -366,8 +347,17 @@ const Mentors = () => {
         setPaginationModel={setPaginationModel}
         value={searchTerm}
         onChange={(val: any) => {
-          if (isValidInput(val.target.value)) {
+          if (val.target.value) {
+            if (isValidInput(val.target.value)) {
+              setSearchTerm(val.target.value)
+            }
+          } else {
             setSearchTerm(val.target.value)
+            setDebouncedSearchTerm(val.target.value)
+            setPaginationModel({
+              page: 0,
+              pageSize: paginationModel.pageSize
+            })
           }
         }}
       />
@@ -387,7 +377,7 @@ const Mentors = () => {
               <Tab value='0' label={`All (${totals?.allCount || 0})`} />
               <Tab value='1' label={`Matched (${totals?.matchedCount || 0})`} />
               <Tab value='2' label={`Unmatched (${totals?.unmatchedCount || 0})`} />
-              <Tab value='3' label={`Invited ${totals?.invitedCount || 0}`} />
+              <Tab value='3' label={`Invited (${totals?.invitedCount || 0})`} />
               <Tab value='4' label={`Inactive (${totals?.inactiveCount || 0})`} />
             </TabList>
           </TabContext>

@@ -19,3 +19,36 @@ export interface Mentors {
   ]
   activeMenteeCount: number
 }
+
+export interface MentorDetail {
+  _id: string
+  about: string
+  industryType: string
+  revenue: string
+  companies: string
+  noOfEmployee: string
+  topics: [
+    {
+      _id: string
+      name: string
+      image: string
+      createdAt: string
+      updatedAt: string
+    }
+  ]
+  createdAt: string
+  updatedAt: string
+  user: {
+    _id: string
+    firstName: string
+    lastName: string
+    email: string
+    avatar_url: string
+  }
+  social: [
+    {
+      type: string
+      link: string
+    }
+  ]
+}

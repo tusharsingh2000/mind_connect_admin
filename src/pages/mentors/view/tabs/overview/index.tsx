@@ -1,23 +1,7 @@
 import { Icon } from '@iconify/react'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, Typography } from '@mui/material'
-
-const cards = [
-  {
-    label: 'Revenue',
-    value: '1250 M+',
-    color: '#ECF5EE'
-  },
-  {
-    label: 'Companies',
-    value: '51',
-    color: '#FDEBE9'
-  },
-  {
-    label: 'Employees',
-    value: '450+',
-    color: '#E6F1F9'
-  }
-]
+import Link from 'next/link'
+import { MentorDetail } from 'src/types/Mentors'
 
 const Document = () => {
   return (
@@ -45,42 +29,70 @@ const Document = () => {
   )
 }
 
-const Social = () => (
+const showIcon = (socialType: string) => {
+  switch (socialType) {
+    case 'FACEBOOK':
+      return 'logos:facebook'
+
+    case 'INSTAGRAM':
+      return 'skill-icons:instagram'
+
+    case 'LINKEDIN':
+      return 'skill-icons:linkedin'
+
+    case 'TWITTER':
+      return 'devicon:twitter'
+
+    default:
+      return 'logos:facebook'
+  }
+}
+
+const Social = ({
+  socials
+}: {
+  socials: {
+    type: string
+    link: string
+  }[]
+}) => (
   <Box display={'flex'} flexWrap='wrap'>
-    <Button sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Icon fontSize={32} icon='skill-icons:linkedin' />
-      <Typography mt={2} color={'#000'} fontWeight={300}>
-        Linkedin
-      </Typography>
-    </Button>
-    <Button sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Icon fontSize={32} icon='skill-icons:instagram' />
-      <Typography mt={2} color={'#000'} fontWeight={300}>
-        Instagram
-      </Typography>
-    </Button>
-    <Button sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Icon fontSize={32} icon='logos:facebook' />
-      <Typography mt={2} color={'#000'} fontWeight={300}>
-        Facebook
-      </Typography>
-    </Button>
-    <Button sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Icon fontSize={34} icon='logos:whatsapp-icon' />
-      <Typography mt={2} color={'#000'} fontWeight={300}>
-        Whatsapp
-      </Typography>
-    </Button>
-    <Button sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Icon fontSize={32} icon='devicon:twitter' />
-      <Typography mt={2} color={'#000'} fontWeight={300}>
-        Twitter
-      </Typography>
-    </Button>
+    {socials?.map((item, index) => (
+      <Link
+        href={item?.link.startsWith('http') ? item?.link : `https://${item?.link}`}
+        style={{ textDecoration: 'none' }}
+        key={index}
+      >
+        <Button sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Icon fontSize={32} icon={showIcon(item?.type || '')} />
+          <Typography textTransform={'lowercase'} mt={2} color={'#000'} fontWeight={300}>
+            {item?.type || ''}
+          </Typography>
+        </Button>
+      </Link>
+    ))}
   </Box>
 )
 
-const OverView = () => {
+const OverView = ({ data }: { data: null | MentorDetail }) => {
+  const cards = [
+    {
+      label: 'Revenue',
+      value: data?.revenue || '',
+      color: '#ECF5EE'
+    },
+    {
+      label: 'Companies',
+      value: data?.companies || '',
+      color: '#FDEBE9'
+    },
+    {
+      label: 'Employees',
+      value: data?.noOfEmployee || '',
+      color: '#E6F1F9'
+    }
+  ]
+
   return (
     <Grid container spacing={6} mt={4}>
       {cards?.map((item, index) => (
@@ -120,16 +132,7 @@ const OverView = () => {
         <Card sx={{ margin: 0 }}>
           <CardHeader title='About' />
           <CardContent>
-            <Typography sx={{ color: 'text.secondary' }}>
-              Mr. Oliver, born and raised in Birmingham, brings his Sikh faith to his commitment to business and
-              philanthropy in Britain. For Prof. Peter Virdee, the attraction of successful business is all about
-              engaging leadership around central human con...
-            </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>
-              Mr. Oliver, born and raised in Birmingham, brings his Sikh faith to his commitment to business and
-              philanthropy in Britain. For Prof. Peter Virdee, the attraction of successful business is all about
-              engaging leadership around central human con...
-            </Typography>
+            <Typography sx={{ color: 'text.secondary' }}>{data?.about || ''}</Typography>
           </CardContent>
           <CardActions className='card-action-dense'>
             <Button>Read More</Button>
@@ -171,7 +174,7 @@ const OverView = () => {
         <Card sx={{ margin: 0 }}>
           <CardHeader title='Social' />
           <CardContent>
-            <Social />
+            <Social socials={data?.social || []} />
           </CardContent>
         </Card>
       </Grid>

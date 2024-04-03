@@ -1,4 +1,7 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
+
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -13,14 +16,41 @@ import TabPanel from '@mui/lab/TabPanel'
 import OverView from './tabs/overview'
 import Admin from './tabs/admin'
 import AssignMenteeForm from '../assign'
-import Link from 'next/link'
+import { MentorDetail } from 'src/types/Mentors'
+import { get } from 'src/utils/AxiosMethods'
+import { toast } from 'react-hot-toast'
 
 const Mentees = () => {
+  const router = useRouter()
+
   const [value, setValue] = useState<string>('1')
+  const [loading, setIsLoading] = useState<boolean>(false)
+  const [data, setData] = useState<null | MentorDetail>(null)
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
   }
+
+  const getMentee = async (mentorId: string) => {
+    try {
+      setIsLoading(true)
+      const response = (await get(`/admin/mentor/${mentorId}`)) as MentorDetail
+      setIsLoading(false)
+      if (response) {
+        setData(response || null)
+      }
+    } catch (error: any) {
+      console.log(error)
+      toast.error(error?.response?.data?.message || '')
+    }
+  }
+
+  useEffect(() => {
+    if (router?.query?.mentorId) {
+      // @ts-ignore
+      getMentee(router?.query?.mentorId || '')
+    }
+  }, [router])
 
   return (
     <Grid container spacing={6}>
@@ -29,11 +59,14 @@ const Mentees = () => {
       </Grid>
       <Grid item xs={12} md={6} display='flex' alignItems={'center'}>
         <Box>
-          <CustomAvatar src={`/images/avatars/1.png`} sx={{ mr: 3, width: '8rem', height: '8rem' }} />
+          <CustomAvatar
+            src={data?.user?.avatar_url || `/images/avatars/1.png`}
+            sx={{ mr: 3, width: '8rem', height: '8rem' }}
+          />
         </Box>
         <Box>
           <Typography position={'relative'} fontSize={26} fontWeight={700}>
-            Prof. Peter Virdee
+            {`${data?.user?.firstName || ''} ${data?.user?.lastName || ''}`}
             <Icon
               fontSize={32}
               style={{ position: 'absolute', top: 2 }}
@@ -42,10 +75,10 @@ const Mentees = () => {
             />
           </Typography>
           <Typography fontSize={18} color={'#7A7A7A'}>
-            Entrepreneur | Business Man | Mentor
+            {data?.industryType || ''}
           </Typography>
           <Typography color={'#7A7A7A'}>
-            petervirdee@business.com <Icon icon='lucide:dot' /> +12 123 12345678
+            {data?.user?.email || ''} <Icon icon='lucide:dot' /> {data?.user?.email || ''}
           </Typography>
           <Link href={'/mentors/profile/1'}>
             <Button>Edit Profile</Button>
@@ -79,7 +112,7 @@ const Mentees = () => {
             <Tab value='2' label='Admin' />
           </TabList>
           <TabPanel value='1'>
-            <OverView />
+            <OverView data={data} />
           </TabPanel>
           <TabPanel value='2'>
             <Admin />

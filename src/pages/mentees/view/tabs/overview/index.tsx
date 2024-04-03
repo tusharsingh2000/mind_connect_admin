@@ -146,8 +146,6 @@ const OverView = ({ data }: { data: Mentee | null }) => {
     setOpen(false)
   }
 
-  console.log(activeUrl)
-
   return (
     <Grid container spacing={6} mt={4}>
       {cards?.map((item, index) => (

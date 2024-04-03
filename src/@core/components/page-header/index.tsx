@@ -24,17 +24,18 @@ const PageHeader = (props: PageHeaderProps) => {
   } = props
 
   useEffect(() => {
-    const delay = 1000 // Debounce delay in milliseconds
-    const timerId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm)
-      setPaginationModel({
-        page: 0,
-        pageSize: paginationModel.pageSize
-      })
-    }, delay)
-
-    return () => {
-      clearTimeout(timerId) // Clear the timeout on cleanup
+    if (searchTerm) {
+      const delay = 1000 // Debounce delay in milliseconds
+      const timerId = setTimeout(() => {
+        setDebouncedSearchTerm(searchTerm)
+        setPaginationModel({
+          page: 0,
+          pageSize: paginationModel.pageSize
+        })
+      }, delay)
+      return () => {
+        clearTimeout(timerId) // Clear the timeout on cleanup
+      }
     }
   }, [searchTerm])
 

@@ -364,8 +364,17 @@ const Mentees = () => {
         setPaginationModel={setPaginationModel}
         value={searchTerm}
         onChange={(val: any) => {
-          if (isValidInput(val.target.value)) {
+          if (val.target.value?.length) {
+            if (isValidInput(val.target.value)) {
+              setSearchTerm(val.target.value)
+            }
+          } else {
             setSearchTerm(val.target.value)
+            setDebouncedSearchTerm(searchTerm)
+            setPaginationModel({
+              page: 0,
+              pageSize: paginationModel.pageSize
+            })
           }
         }}
       />

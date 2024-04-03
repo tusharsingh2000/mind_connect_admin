@@ -20,6 +20,7 @@ import { Mentee } from 'src/types/Mentees'
 import AlertDialog from 'src/@core/components/dialog'
 import { toast } from 'react-hot-toast'
 import { get } from 'src/utils/AxiosMethods'
+import { MentorDetail } from 'src/types/Mentors'
 
 const Mentees = () => {
   const [value, setValue] = useState<string>('1')
