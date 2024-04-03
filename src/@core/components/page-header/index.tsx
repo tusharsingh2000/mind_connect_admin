@@ -33,6 +33,7 @@ const PageHeader = (props: PageHeaderProps) => {
           pageSize: paginationModel.pageSize
         })
       }, delay)
+
       return () => {
         clearTimeout(timerId) // Clear the timeout on cleanup
       }

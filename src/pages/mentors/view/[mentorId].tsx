@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
-import { Box, Button, Divider, Tab, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Divider, Tab, Typography } from '@mui/material'
 import GoBackButton from 'src/@core/components/buttons/goBackButton'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 
@@ -31,7 +31,7 @@ const Mentees = () => {
     setValue(newValue)
   }
 
-  const getMentee = async (mentorId: string) => {
+  const getMentor = async (mentorId: string) => {
     try {
       setIsLoading(true)
       const response = (await get(`/admin/mentor/${mentorId}`)) as MentorDetail
@@ -47,10 +47,19 @@ const Mentees = () => {
 
   useEffect(() => {
     if (router?.query?.mentorId) {
-      // @ts-ignore
-      getMentee(router?.query?.mentorId || '')
+      const mentorId = Array.isArray(router?.query?.mentorId) ? router?.query?.mentorId[0] : router?.query?.mentorId
+      getMentor(mentorId || '')
     }
   }, [router])
+
+  if (loading) {
+    return (
+      <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+        <CircularProgress sx={{ mb: 4 }} />
+        <Typography>Loading...</Typography>
+      </Box>
+    )
+  }
 
   return (
     <Grid container spacing={6}>

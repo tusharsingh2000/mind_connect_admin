@@ -34,6 +34,7 @@ interface FormData {
 
 const SetEmailForm = () => {
   const router = useRouter()
+
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 

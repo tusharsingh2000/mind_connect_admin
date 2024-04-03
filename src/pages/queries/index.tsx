@@ -7,9 +7,9 @@ import CustomChip from 'src/@core/components/mui/chip'
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import { Box, Button, Divider } from '@mui/material'
+import { Box, Divider } from '@mui/material'
 import { get } from 'src/utils/AxiosMethods'
-import { QUERY } from 'src/types/General'
+import { QUERY, Status } from 'src/types/General'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { getInitials } from 'src/@core/utils/get-initials'
 import TableColumns from 'src/@core/components/table'
@@ -147,7 +147,7 @@ const Queries = () => {
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const statuses = {
+        const statuses: { [key: string]: Status } = {
           1: {
             label: 'In Progress',
             color: 'primary'
@@ -175,9 +175,7 @@ const Queries = () => {
             rounded
             size='small'
             skin='light'
-            // @ts-ignore
             color={statuses[`${params?.row?.action}`]?.color}
-            // @ts-ignore
             label={statuses[`${params?.row?.action}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />

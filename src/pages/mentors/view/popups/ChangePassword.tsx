@@ -46,6 +46,7 @@ interface FormData {
 
 const ChangePasswordForm = () => {
   const router = useRouter()
+
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 

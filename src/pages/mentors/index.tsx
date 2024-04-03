@@ -121,7 +121,7 @@ const Mentors = () => {
         let idx = -1
         idx = mentors?.findIndex(ele => ele?._id === userId)
         if (idx > -1) {
-          let newArr = [...mentors]
+          const newArr = [...mentors]
           newArr[idx] = {
             ...newArr[idx],
             isBlocked: status
@@ -206,24 +206,13 @@ const Mentors = () => {
             rounded
             size='small'
             skin='light'
-            // @ts-ignore
             color={params.row.active ? 'success' : 'error'}
-            // @ts-ignore
             label={params.row.active ? 'Active' : 'Inactive'}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
         )
       }
     },
-    // {
-    //   flex: 0.125,
-    //   minWidth: 140,
-    //   field: 'ratings',
-    //   headerName: 'Ratings',
-    //   renderCell: () => {
-    //     return <Rating defaultValue={Math.random() * 5} precision={0.5} name='half-rating' />
-    //   }
-    // }
     {
       flex: 0.1,
       type: 'blocked',

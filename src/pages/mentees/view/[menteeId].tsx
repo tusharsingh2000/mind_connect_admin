@@ -20,7 +20,6 @@ import { Mentee } from 'src/types/Mentees'
 import AlertDialog from 'src/@core/components/dialog'
 import { toast } from 'react-hot-toast'
 import { get } from 'src/utils/AxiosMethods'
-import { MentorDetail } from 'src/types/Mentors'
 
 const Mentees = () => {
   const [value, setValue] = useState<string>('1')
@@ -83,8 +82,8 @@ const Mentees = () => {
 
   useEffect(() => {
     if (router?.query?.menteeId) {
-      // @ts-ignore
-      getMentee(router?.query?.menteeId || '')
+      const menteeId = Array.isArray(router?.query?.menteeId) ? router?.query?.menteeId[0] : router?.query?.menteeId
+      getMentee(menteeId || '')
     }
   }, [router])
 

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Box, Button } from '@mui/material'
 import AlertDialog from 'src/@core/components/dialog'
-import { ChangePasswordForm, SetEmailForm } from '../../popups'
 import { post } from 'src/utils/AxiosMethods'
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
+import ChangePasswordForm from '../../popups/ChangePassword'
+import SetEmailForm from '../../popups/SetEmail'
 
 const Registration = () => {
   const router = useRouter()

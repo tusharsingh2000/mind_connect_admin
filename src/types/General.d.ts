@@ -72,3 +72,8 @@ export type SESSIONS = {
   __v: 0
   acceptedAt: string
 }
+
+export interface Status {
+  label: string
+  color: 'default' | 'success' | 'info' | 'error' | 'primary' | 'secondary' | 'warning' | undefined
+}

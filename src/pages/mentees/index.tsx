@@ -27,6 +27,7 @@ import { toast } from 'react-hot-toast'
 import AlertDialog from 'src/@core/components/dialog'
 import { get, patch } from 'src/utils/AxiosMethods'
 import { isValidInput } from 'src/utils/validations'
+import { Status } from 'src/types/General'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -161,7 +162,7 @@ const Mentees = () => {
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const statuses = {
+        const statuses: { [key: string]: Status } = {
           1: {
             label: 'Approved',
             color: 'success'
@@ -181,9 +182,7 @@ const Mentees = () => {
             rounded
             size='small'
             skin='light'
-            // @ts-ignore
             color={statuses[`${params?.row?.status}`]?.color}
-            // @ts-ignore
             label={statuses[`${params?.row?.status}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />

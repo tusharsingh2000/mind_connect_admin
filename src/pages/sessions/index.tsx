@@ -11,16 +11,15 @@ import { Box, CircularProgress, Divider, Rating } from '@mui/material'
 import { get } from 'src/utils/AxiosMethods'
 import PageHeader from 'src/@core/components/page-header'
 import { isValidInput } from 'src/utils/validations'
-import { SESSIONS } from 'src/types/General'
+import { SESSIONS, Status } from 'src/types/General'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import Link from 'next/link'
-import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import TableColumns, { StatusObj } from 'src/@core/components/table'
+import TableColumns from 'src/@core/components/table'
 import { format } from 'date-fns'
 
 // ** Styled Tab component
@@ -61,20 +60,9 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const statusObj: StatusObj = {
-  1: { title: 'accepted', color: 'primary' },
-  2: { title: 'completed', color: 'success' },
-  3: { title: 'cancelled', color: 'error' },
-  4: { title: 'pending', color: 'warning' },
-  5: { title: 'rescheduled', color: 'info' }
-}
-
 // // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
   const { row } = params
-  const stateNum = Math.floor(Math.random() * 6)
-  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
-  const color = states[stateNum]
 
   if (row?.user?.avatar_url?.length) {
     return <CustomAvatar src={row?.user?.avatar_url || ''} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
@@ -370,10 +358,6 @@ const Sessions = () => {
   const [total, setTotal] = useState(0)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('')
-  const [totals, setTotals] = useState<{ all: number; approved: number; pending: number; rejected: number } | null>(
-    null
-  )
-  const [open, setOpen] = useState(false)
 
   const otherColumns: GridColDef[] = [
     {
@@ -407,19 +391,6 @@ const Sessions = () => {
         return <div>14/02/2024 12:24 PM</div>
       }
     },
-    // {
-    //   flex: 0.125,
-    //   minWidth: 150,
-    //   field: '4',
-    //   headerName: 'Recording',
-    //   renderCell: (params: GridRenderCellParams) => {
-    //     console.log(params.row?.recording?.recordingUrl)
-
-    //     if (params.row?.recording?.recordingUrl) {
-    //       return <audio src={params.row?.recording?.recordingUrl} controls />
-    //     }
-    //   }
-    // },
     {
       flex: 0.125,
       minWidth: 180,
@@ -459,6 +430,7 @@ const Sessions = () => {
       headerName: 'Session No',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Typography variant='body2' sx={{ color: 'text.primary' }}>
             {row?.bookingNo || ''}
@@ -552,6 +524,7 @@ const Sessions = () => {
       headerName: 'Start Time',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Typography variant='body2' sx={{ color: 'text.primary' }}>
             {row?.bookingTimeStart || ''}
@@ -566,6 +539,7 @@ const Sessions = () => {
       headerName: 'End Time',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
+
         return (
           <Typography variant='body2' sx={{ color: 'text.primary' }}>
             {row?.bookingTimeEnd || ''}
@@ -579,7 +553,7 @@ const Sessions = () => {
       field: 'status',
       headerName: 'Status',
       renderCell: (params: GridRenderCellParams) => {
-        const statuses = {
+        const statuses: { [key: string]: Status } = {
           0: {
             label: 'Pending',
             color: 'info'
@@ -607,9 +581,7 @@ const Sessions = () => {
             rounded
             size='small'
             skin='light'
-            // @ts-ignore
             color={statuses[`${params?.row?.status}`]?.color}
-            // @ts-ignore
             label={statuses[`${params?.row?.status}`]?.label}
             sx={{ '& .MuiChip-label': { textTransform: 'capitalize' } }}
           />
@@ -705,7 +677,6 @@ const Sessions = () => {
               <TableColumns
                 paginationModel={paginationModel}
                 setPaginationModel={setPaginationModel}
-                // columns={columns}
                 columns={[
                   ...columns,
                   ...otherColumns?.filter(ele => (activeTab === '-1' ? false : ele.field === activeTab))

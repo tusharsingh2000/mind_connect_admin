@@ -167,7 +167,9 @@ const UpdateQuery = ({ refetch, status, id }: { refetch: () => {}; status: numbe
 
   return (
     <Fragment>
-      <Button children='Update' variant='contained' size='small' onClick={handleClickOpen} />
+      <Button variant='contained' size='small' onClick={handleClickOpen}>
+        Update
+      </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
           <Typography fontSize={24} fontWeight={600}>
