@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
 import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Button, Divider } from '@mui/material'
+import { Box, Button, CircularProgress, Divider } from '@mui/material'
 import AddDosForm from './form'
 import TabPanel from '@mui/lab/TabPanel'
 import { Icon } from '@iconify/react'
@@ -125,7 +125,7 @@ const DosNDons = () => {
       <Grid item xs={12}>
         <Box display={'flex'} justifyContent='space-between' alignItems='center'>
           <Typography fontSize={32} fontWeight={700}>
-            Do's & Don's
+            Do's & Dont's
           </Typography>
           <AddDosForm refetch={getDoDons} />
         </Box>
@@ -143,12 +143,12 @@ const DosNDons = () => {
             sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
           >
             <Tab value='0' label={`Do's`} />
-            <Tab value='1' label={`Don's`} />
+            <Tab value='1' label={`Dont's`} />
           </TabList>
           <Box sx={{ mt: 5 }}>
             {isLoading ? (
               <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                {/* <CircularProgress sx={{ mb: 4 }} /> */}
+                <CircularProgress sx={{ mb: 4 }} />
                 <Typography>Loading...</Typography>
               </Box>
             ) : (
@@ -160,7 +160,7 @@ const DosNDons = () => {
                 </TabPanel>
                 <TabPanel value='1' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
-                    Don's
+                    Dont's
                   </Typography>
                 </TabPanel>
                 {list?.length ? (

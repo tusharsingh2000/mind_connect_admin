@@ -62,7 +62,7 @@ const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refe
     try {
       const response = await patch(`/admin/instruction/${id}`, { ...data, type: Number(data.type) })
       if (response) {
-        toast.success(`${Number(data.type) === 0 ? `Do's` : `Don's`} updated successfully`)
+        toast.success(`${Number(data.type) === 0 ? `Do's` : `Dont's`} updated successfully`)
         resetField('heading')
         resetField('description')
         resetField('type')
@@ -88,7 +88,7 @@ const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refe
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
           <Typography fontSize={24} fontWeight={600}>
-            Do's & Don's
+            Do's & Dont's
           </Typography>
         </DialogTitle>
         <DialogContent>

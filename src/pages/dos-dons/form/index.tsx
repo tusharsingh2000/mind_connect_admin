@@ -60,7 +60,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
     try {
       const response = await post('/admin/instruction', { ...data, type: Number(data.type) })
       if (response) {
-        toast.success(`${Number(data.type) === 0 ? `Do's` : `Don's`} added successfully`)
+        toast.success(`${Number(data.type) === 0 ? `Do's` : `Dont's`} added successfully`)
         resetField('heading')
         resetField('description')
         resetField('type')
@@ -75,12 +75,12 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
   return (
     <Fragment>
       <Button variant='outlined' size='medium' onClick={handleClickOpen}>
-        + Add Do's & Don's
+        + Add Do's & Dont's
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
           <Typography fontSize={24} fontWeight={600}>
-            Do's & Don's
+            Do's & Dont's
           </Typography>
         </DialogTitle>
         <DialogContent>

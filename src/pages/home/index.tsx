@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { get } from 'src/utils/AxiosMethods'
+import RechartsLineChart from 'src/@core/components/dashboard-chart'
+import { Box } from '@mui/material'
 
 type Dashboard = {
   numberOfMentors: number
@@ -25,6 +27,9 @@ const Home = () => {
     mentees: 0,
     applicants: 0
   })
+
+  const [graphData, setGraphData] = useState([])
+  const [active, setActive] = useState('WEEK')
 
   const cards = [
     {
@@ -65,38 +70,67 @@ const Home = () => {
     }
   }
 
+  const getGraphData = async () => {
+    try {
+      const response = (await get(`/admin/graph-data?type=${active}`)) as any
+      if (response) {
+        setGraphData(
+          response?.map((item: any) => {
+            const key = Object.keys(item)[0] as any
+            const value = Object.values(item)[0] as any
+            
+return {
+              name: key,
+              canceled: value.canceled,
+              completed: value.completed,
+              rescheduled: value.rescheduled
+            }
+          })
+        )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getDashboard()
   }, [])
+  useEffect(() => {
+    getGraphData()
+  }, [active])
 
   return (
-    <Grid container spacing={6} p={6}>
-      {cards?.map((item, index) => (
-        <Grid
-          key={index}
-          sx={{
-            background: item.color,
-            height: 150,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}
-          pl={5}
-          mx={2}
-          mb={4}
-          item
-          md={2.8}
-          xs={12}
-        >
-          <Typography fontSize={18} fontWeight={400}>
-            {item.label}
-          </Typography>
-          <Typography fontSize={48} fontWeight={900}>
-            {item.value}
-          </Typography>
-        </Grid>
-      ))}
-    </Grid>
+    <Box>
+      <Grid container spacing={6} p={6}>
+        {cards?.map((item, index) => (
+          <Grid
+            key={index}
+            sx={{
+              background: item.color,
+              height: 150,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}
+            pl={5}
+            mx={2}
+            mb={4}
+            item
+            md={2.8}
+            xs={12}
+          >
+            <Typography fontSize={18} fontWeight={400}>
+              {item.label}
+            </Typography>
+            <Typography fontSize={48} fontWeight={900}>
+              {item.value}
+            </Typography>
+          </Grid>
+        ))}
+      </Grid>
+      <RechartsLineChart active={active} setActive={setActive} data={graphData} />
+    </Box>
   )
 }
 

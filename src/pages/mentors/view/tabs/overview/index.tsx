@@ -2,32 +2,8 @@ import { Icon } from '@iconify/react'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, Typography } from '@mui/material'
 import Link from 'next/link'
 import { MentorDetail } from 'src/types/Mentors'
-
-const Document = () => {
-  return (
-    <Box width={'50%'} display='flex' alignItems={'center'} gap={2} my={3} borderBottom='0.5px solid #7A7A7A' pb={5}>
-      <Box
-        sx={{
-          background: '#FFF3EA',
-          borderRadius: 100,
-          height: 40,
-          width: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Icon fontSize={24} color='#EA7A20' icon='system-uicons:document' />
-      </Box>
-      <Box>
-        <Typography fontSize={14} mb={1}>
-          Business Plan.pdf
-        </Typography>
-        <Typography fontSize={12}>200 KB</Typography>
-      </Box>
-    </Box>
-  )
-}
+import AboutView from '../../popups/About'
+import SpecialityView from '../../popups/Speciality'
 
 const showIcon = (socialType: string) => {
   switch (socialType) {
@@ -73,6 +49,39 @@ const Social = ({
     ))}
   </Box>
 )
+
+const SpecialistCard = ({ image, name }: { image: string; name: string }) => {
+  return (
+    <Box sx={{ position: 'relative' }}>
+      <Box>
+        <img
+          src={image}
+          style={{
+            height: 180,
+            width: 200,
+            borderRadius: 10
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '140px',
+          width: '200px',
+          padding: '9px',
+          background: 'rgba(0,0,0,0.6)',
+          borderRadius: '0px 0px 10px 10px',
+          color: 'white',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}
+      >
+        {name || ''}
+      </Box>
+    </Box>
+  )
+}
 
 const OverView = ({ data }: { data: null | MentorDetail }) => {
   const cards = [
@@ -131,11 +140,22 @@ const OverView = ({ data }: { data: null | MentorDetail }) => {
       >
         <Card sx={{ margin: 0 }}>
           <CardHeader title='About' />
-          <CardContent>
-            <Typography sx={{ color: 'text.secondary' }}>{data?.about || ''}</Typography>
+          <CardContent style={{ height: 200, overflow: 'hidden' }}>
+            <Typography
+              sx={{
+                color: 'text.secondary',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              {data?.about || ''}
+            </Typography>
           </CardContent>
-          <CardActions className='card-action-dense'>
-            <Button>Read More</Button>
+          <CardActions
+            sx={{ visibility: data?.about?.length && data?.about?.length > 660 ? 'visible' : 'hidden' }}
+            className='card-action-dense'
+          >
+            <AboutView about={data?.about || ''} />
           </CardActions>
         </Card>
       </Grid>
@@ -148,17 +168,14 @@ const OverView = ({ data }: { data: null | MentorDetail }) => {
         md={5.8}
       >
         <Card sx={{ margin: 0 }}>
-          <CardHeader title='Documents' />
-          <CardContent>
-            <Box display={'flex'} flexWrap='wrap'>
-              <Document />
-              <Document />
-              <Document />
-              <Document />
-            </Box>
+          <CardHeader title='Specialities' />
+          <CardContent sx={{ display: 'flex', gap: 10 }}>
+            {data?.topics?.map(item => (
+              <SpecialistCard image={item?.image || ''} name={item?.name || ''} key={item?._id} />
+            ))}
           </CardContent>
           <CardActions className='card-action-dense'>
-            <Button>View All</Button>
+            <SpecialityView specialities={data?.topics || undefined} />
           </CardActions>
         </Card>
       </Grid>
@@ -186,9 +203,9 @@ const OverView = ({ data }: { data: null | MentorDetail }) => {
         xs={12}
         md={5.8}
       >
-        <Card sx={{ marginTop: 6 }}>
+        <Card>
           <CardHeader title='Languages Known' />
-          <CardContent>
+          <CardContent style={{ height: 100 }}>
             <Typography sx={{ color: 'text.secondary' }}>German, English</Typography>
           </CardContent>
         </Card>

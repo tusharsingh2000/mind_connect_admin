@@ -19,7 +19,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'carbon:user-filled'
     },
     {
-      title: `Do's & Don's`,
+      title: `Do's & Dont's`,
       path: '/dos-dons',
       icon: 'mdi:sign-routes'
     },
@@ -27,6 +27,11 @@ const navigation = (): VerticalNavItemsType => {
       title: 'FAQs',
       path: '/faqs',
       icon: 'mdi:faq'
+    },
+    {
+      title: 'Topics',
+      path: '/topics',
+      icon: 'icon-park-solid:topic'
     },
     {
       title: 'Sessions',

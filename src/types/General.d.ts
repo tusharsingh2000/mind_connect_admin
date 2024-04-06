@@ -12,6 +12,12 @@ export type DODON = {
   description: string
 }
 
+export type TOPIC = {
+  _id: string
+  image: string
+  name: string
+}
+
 export type QUERY = {
   _id: string
   name: string

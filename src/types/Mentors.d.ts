@@ -27,15 +27,13 @@ export interface MentorDetail {
   revenue: string
   companies: string
   noOfEmployee: string
-  topics: [
-    {
-      _id: string
-      name: string
-      image: string
-      createdAt: string
-      updatedAt: string
-    }
-  ]
+  topics: {
+    _id: string
+    name: string
+    image: string
+    createdAt: string
+    updatedAt: string
+  }[]
   createdAt: string
   updatedAt: string
   user: {

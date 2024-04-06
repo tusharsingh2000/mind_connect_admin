@@ -122,4 +122,25 @@ const formDataPut = async <T>(url: string, data: any): Promise<T | undefined> =>
   }
 }
 
-export { get, post, put, patch, del, formDataPost, formDataPut }
+const fileUpload = async <T>(url: string, file: File): Promise<T | undefined> => {
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await apiService.post<T>(url, formData, { headers: getFormDataHeader() })
+
+    return handleResponse(response)
+  } catch (error) {
+    handleError(error as AxiosError<ErrorResponse, any>)
+  }
+}
+
+const uploadFile = async (files: File[]) => {
+  if (files && files.length > 0) {
+    const file = files[0]
+    
+return await fileUpload(`${BASE_URL}/media`, file)
+  }
+}
+
+export { get, post, put, patch, del, formDataPost, formDataPut, uploadFile }

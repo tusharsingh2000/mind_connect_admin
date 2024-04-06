@@ -173,7 +173,7 @@ const UpdateQuery = ({ refetch, status, id }: { refetch: () => {}; status: numbe
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
         <DialogTitle id='form-dialog-title'>
           <Typography fontSize={24} fontWeight={600}>
-            Do's & Don's
+            Do's & Dont's
           </Typography>
         </DialogTitle>
         <DialogContent>
