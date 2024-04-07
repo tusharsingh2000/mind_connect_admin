@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, useEffect } from 'react'
 
 // ** MUI Components
 import Button from '@mui/material/Button'
@@ -30,6 +30,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { get } from 'src/utils/AxiosMethods'
+import { BASE_URL } from 'src/configs/auth'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -105,6 +107,19 @@ const LoginPage = () => {
       })
     })
   }
+
+  const check2FA = async () => {
+    try {
+      const response = await get(`${BASE_URL}/auth/check-2fa`)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    check2FA()
+  }, [])
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
