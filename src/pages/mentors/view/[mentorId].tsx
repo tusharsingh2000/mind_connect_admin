@@ -87,9 +87,9 @@ const Mentees = () => {
             {data?.industryType || ''}
           </Typography>
           <Typography color={'#7A7A7A'}>
-            {data?.user?.email || ''} <Icon icon='lucide:dot' /> {data?.user?.email || ''}
+            {data?.user?.phone || ''} <Icon icon='lucide:dot' /> {data?.user?.email || ''}
           </Typography>
-          <Link href={'/mentors/profile/1'}>
+          <Link href={`/mentors/profile/${router?.query?.mentorId}`}>
             <Button>Edit Profile</Button>
           </Link>
         </Box>

@@ -2,7 +2,17 @@ import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
-import { Box, Button, Dialog, DialogContent, DialogTitle, MenuItem, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  TextField,
+  Typography
+} from '@mui/material'
 import { get, post } from 'src/utils/AxiosMethods'
 import { BASE_URL } from 'src/configs/auth'
 
@@ -30,6 +40,13 @@ const Settings = () => {
   const [loading, setLoading] = useState(false)
   const [qr, setQr] = useState('')
   const [open, setOpen] = useState<boolean>(false)
+  const [settingsData, setSettingsData] = useState({
+    description: '',
+    headline: '',
+    address: '',
+    slot: '',
+    phone: ''
+  })
 
   const handleClickOpen = () => setOpen(true)
 
@@ -53,8 +70,7 @@ const Settings = () => {
         action: isEnabled ? 'disable' : 'enable'
       })
       if (response) {
-        toast.success(`added successfully`)
-        // toast.success(`${Number(data.type) === 0 ? `Do's` : `Dont's`} added successfully`)
+        toast.success(`Added successfully`)
         resetField('token')
         handleClose()
         check2FA()
@@ -95,9 +111,58 @@ const Settings = () => {
     }
   }
 
+  const getSettings = async () => {
+    try {
+      setLoading(true)
+      const response = (await get(`${BASE_URL}/common/settings`)) as {
+        description: string
+        headline: string
+        phone: string
+        address: string
+        slot: string
+      }
+
+      if (response) {
+        setSettingsData({
+          description: response?.description || '',
+          headline: response?.headline || '',
+          address: response?.address || '',
+          slot: response?.slot || '',
+          phone: response?.phone || ''
+        })
+      }
+
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
+    }
+  }
+
+  const updateSettings = async () => {
+    try {
+      const response = await post(`${BASE_URL}/admin/settings`, settingsData)
+      if (response) {
+        toast.success('Updated Successfully')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     check2FA()
+    getSettings()
   }, [])
+
+  if (loading) {
+    return (
+      <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+        <CircularProgress sx={{ mb: 4 }} />
+        <Typography>Loading...</Typography>
+      </Box>
+    )
+  }
 
   return (
     <Grid container spacing={6} width='50%'>
@@ -106,32 +171,103 @@ const Settings = () => {
           Settings
         </Typography>
       </Box>
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <Box mb={5}>
-          <TextField label='Company Address' variant='standard' fullWidth />
+          <TextField
+            value={settingsData?.headline || ''}
+            onChange={val =>
+              setSettingsData({
+                ...settingsData,
+                headline: val.target.value
+              })
+            }
+            label='Headline'
+            variant='standard'
+            fullWidth
+          />
         </Box>
       </Grid>
       <Grid item xs={12}>
         <Box mb={5}>
-          <TextField label='Phone Number' variant='standard' fullWidth />
+          <TextField
+            value={settingsData?.description || ''}
+            onChange={val =>
+              setSettingsData({
+                ...settingsData,
+                description: val.target.value
+              })
+            }
+            label='Description'
+            variant='standard'
+            fullWidth
+          />
         </Box>
       </Grid>
       <Grid item xs={12}>
-      <Box mb={5}>
-      <TextField select label='Slot Duration' variant='standard' fullWidth>
-      <MenuItem value={10}>15</MenuItem>
-      <MenuItem value={20}>30</MenuItem>
-      <MenuItem value={30}>45</MenuItem>
-      <MenuItem value={60}>60</MenuItem>
-      <MenuItem value={90}>90</MenuItem>
-      <MenuItem value={120}>120</MenuItem>
-      </TextField>
-      </Box>
-    </Grid> */}
+        <Box mb={5}>
+          <TextField
+            value={settingsData?.address || ''}
+            onChange={val =>
+              setSettingsData({
+                ...settingsData,
+                address: val.target.value
+              })
+            }
+            label='Company Address'
+            variant='standard'
+            fullWidth
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box mb={5}>
+          <TextField
+            value={settingsData?.phone || ''}
+            onChange={val =>
+              setSettingsData({
+                ...settingsData,
+                phone: val.target.value
+              })
+            }
+            label='Phone Number'
+            variant='standard'
+            fullWidth
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box mb={5}>
+          <TextField
+            select
+            label='Slot Duration'
+            value={settingsData?.slot}
+            onChange={val =>
+              setSettingsData({
+                ...settingsData,
+                slot: val.target.value
+              })
+            }
+            variant='standard'
+            fullWidth
+          >
+            <MenuItem value={'15'}>15</MenuItem>
+            <MenuItem value={'30'}>30</MenuItem>
+            <MenuItem value={'45'}>45</MenuItem>
+            <MenuItem value={'60'}>60</MenuItem>
+            <MenuItem value={'90'}>90</MenuItem>
+            <MenuItem value={'120'}>120</MenuItem>
+          </TextField>
+        </Box>
+        <Box my={5}>
+          <Button onClick={updateSettings} variant='contained'>
+            Save
+          </Button>
+        </Box>
+      </Grid>
       <Grid item xs={12}>
         <Typography>{'Enable/Disable 2FA'}</Typography>
         <Box my={5}>
-          <Button onClick={get2FAToken} variant='contained'>
+          <Button onClick={isEnabled ? handleClickOpen : get2FAToken} variant='contained'>
             {isEnabled ? 'Disable' : 'Enable'}
           </Button>
         </Box>
@@ -156,7 +292,11 @@ const Settings = () => {
                 render={({ field: { value, onChange, onBlur } }) => (
                   <CustomTextField
                     fullWidth
-                    label='You will get the code by scanning this in google authenticator app'
+                    label={
+                      isEnabled
+                        ? 'Please enter the code from google authenticator app'
+                        : 'You will get the code by scanning this in google authenticator app'
+                    }
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}

@@ -74,3 +74,13 @@ export const isValidInputWithSC = (value: string) => {
 
   return true // Accept the input if it meets all the conditions
 }
+
+export const isValidEmail = (value: string) => {
+  // Check if the input is a valid email address
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailPattern.test(value)) {
+    return false
+  }
+
+  return true // Accept the input if it meets all the conditions
+}

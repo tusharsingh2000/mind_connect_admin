@@ -47,6 +47,11 @@ const navigation = (): VerticalNavItemsType => {
       path: '/settings',
       title: 'Settings',
       icon: 'lets-icons:setting-alt-fill'
+    },
+    {
+      path: '/cms',
+      title: 'Cms',
+      icon: 'ph:note-fill'
     }
   ]
 }

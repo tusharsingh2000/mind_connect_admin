@@ -12,6 +12,7 @@ import authConfig, { BASE_URL } from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
+import { toast } from 'react-hot-toast'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -81,6 +82,9 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     delete params.rememberMe
+    if (!params?.token?.length) {
+      delete params.token
+    }
     axios
       .post(`${BASE_URL}/auth/admin/login`, params)
       .then(async response => {
@@ -89,6 +93,8 @@ const AuthProvider = ({ children }: Props) => {
 
         setUser({ ...response.data.user })
         window.localStorage.setItem('userData', JSON.stringify(response.data.user))
+
+        toast.success('Logged in successfully')
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 

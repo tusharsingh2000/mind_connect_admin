@@ -32,6 +32,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { get } from 'src/utils/AxiosMethods'
 import { BASE_URL } from 'src/configs/auth'
+import { toast } from 'react-hot-toast'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -60,23 +61,27 @@ const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }))
 
-const schema = yup.object().shape({
-  username: yup.string().min(5).required(),
-  password: yup.string().min(5).required()
-})
-
 const defaultValues = {
   password: '',
+  token: '',
   username: ''
 }
 
 interface FormData {
   username: string
   password: string
+  token: string
 }
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState<boolean>(false)
+
+  const schema = yup.object().shape({
+    username: yup.string().min(5).required(),
+    token: isTwoFactorEnabled ? yup.string().min(6).required() : yup.string().optional(),
+    password: yup.string().min(5).required()
+  })
 
   // ** Hooks
   const auth = useAuth()
@@ -89,29 +94,29 @@ const LoginPage = () => {
 
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
     defaultValues,
-    mode: 'onBlur',
+    mode: 'onSubmit',
     resolver: yupResolver(schema)
   })
 
   const onSubmit = (data: FormData) => {
-    const { username, password } = data
-    auth.login({ username, password, rememberMe: true, role: 'Mentee' }, () => {
-      setError('username', {
-        type: 'manual',
-        message: 'Username or Password is invalid'
-      })
+    const { username, password, token } = data
+    auth.login({ username, password, rememberMe: true, role: 'Mentee', token }, (error: any) => {
+      toast.error(error?.response?.data?.message || '')
     })
   }
 
   const check2FA = async () => {
     try {
-      const response = await get(`${BASE_URL}/auth/check-2fa`)
-      console.log(response)
+      const response = (await get(`${BASE_URL}/auth/check-2fa?role=ADMIN`)) as {
+        isTwoFactorAuthenticationEnabled: boolean
+      }
+      if (response) {
+        setIsTwoFactorEnabled(response?.isTwoFactorAuthenticationEnabled)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -209,7 +214,7 @@ const LoginPage = () => {
                   )}
                 />
               </Box>
-              <Box sx={{ mb: 1.5 }}>
+              <Box sx={{ mb: 4 }}>
                 <Controller
                   name='password'
                   control={control}
@@ -241,6 +246,28 @@ const LoginPage = () => {
                     />
                   )}
                 />
+              </Box>
+              <Box sx={{ mb: 4 }}>
+                {isTwoFactorEnabled ? (
+                  <Controller
+                    name='token'
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <CustomTextField
+                        fullWidth
+                        autoFocus
+                        label='2FA Token'
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        placeholder='2FA Token'
+                        error={Boolean(errors.token)}
+                        {...(errors.token && { helperText: errors.token.message })}
+                      />
+                    )}
+                  />
+                ) : null}
               </Box>
               <Box
                 sx={{

@@ -42,6 +42,9 @@ export interface MentorDetail {
     lastName: string
     email: string
     avatar_url: string
+    phone: string
+    dob: string
+    language: string[]
   }
   social: [
     {

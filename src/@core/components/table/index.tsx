@@ -50,6 +50,10 @@ const TableColumns = ({
         columnVisibilityModel={hideNameColumn}
         onPaginationModelChange={setPaginationModel}
         onColumnVisibilityModelChange={newValue => setHideNameColumn(newValue)}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
       />
     </Card>
   )
