@@ -447,7 +447,7 @@ const Sessions = () => {
         const { row } = params
 
         return (
-          <Link href={'mentees/view/1'} style={{ textDecoration: 'none' }}>
+          <Link href={`mentees/view/${row?.user?._id}`} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box
@@ -480,7 +480,7 @@ const Sessions = () => {
         const { row } = params
 
         return (
-          <Link href={'mentors/view/1'} style={{ textDecoration: 'none' }}>
+          <Link href={`mentors/view/${row?.mentor?._id}`} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box

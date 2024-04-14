@@ -61,6 +61,15 @@ const PageHeader = (props: PageHeaderProps) => {
               <InputAdornment position='start'>
                 <Icon icon='iconamoon:search-light' />
               </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position='start'>
+                {value?.length ? (
+                  <Box onClick={() => onChange({ target: { value: '' } })} sx={{ cursor: 'pointer' }}>
+                    <Icon icon='pajamas:clear' />
+                  </Box>
+                ) : null}
+              </InputAdornment>
             )
           }}
         />

@@ -78,9 +78,9 @@ const LoginPage = () => {
   const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState<boolean>(false)
 
   const schema = yup.object().shape({
-    username: yup.string().min(5).required(),
+    username: yup.string().required('Username is required'),
     token: isTwoFactorEnabled ? yup.string().min(6).required() : yup.string().optional(),
-    password: yup.string().min(5).required()
+    password: yup.string().required('Password is required')
   })
 
   // ** Hooks
@@ -207,7 +207,7 @@ const LoginPage = () => {
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      placeholder='admin@vuexy.com'
+                      placeholder='Username'
                       error={Boolean(errors.username)}
                       {...(errors.username && { helperText: errors.username.message })}
                     />
@@ -225,6 +225,7 @@ const LoginPage = () => {
                       value={value}
                       onBlur={onBlur}
                       label='Password'
+                      placeholder='Password'
                       onChange={onChange}
                       id='auth-login-v2-password'
                       error={Boolean(errors.password)}
