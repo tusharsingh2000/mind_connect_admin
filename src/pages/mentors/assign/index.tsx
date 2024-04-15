@@ -34,6 +34,7 @@ const AssignMenteeForm = ({
   const assignMentee = async () => {
     if (selectedMentee === '0') {
       toast.error('Please select a mentor')
+
       return
     }
     try {

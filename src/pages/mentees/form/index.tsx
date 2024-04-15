@@ -35,6 +35,7 @@ const AssignMentorForm = ({
     try {
       if (selectedMentor === '0') {
         toast.error('Please select a mentor')
+
         return
       }
       const response = await patch(`${BASE_URL}/admin/assign-mentor`, { menteeId, mentorId: selectedMentor })
