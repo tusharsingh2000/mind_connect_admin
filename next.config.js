@@ -13,6 +13,7 @@ module.exports = {
       ...config.resolve.alias,
       apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
     }
+    config.resolve.alias.canvas = false
 
     return config
   }

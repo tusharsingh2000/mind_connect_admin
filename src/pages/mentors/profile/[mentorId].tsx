@@ -75,14 +75,18 @@ const Profile = () => {
       !formData?.image?.length
     ) {
       toast.error('Please fill the required fields')
+
       return false
     } else if (!isValidEmail(formData?.email)) {
       toast.error('Please enter a valid email')
+
       return false
     } else if (formData?.phone?.length < 8) {
       toast.error('Please enter a valid phonr number')
+
       return false
     }
+
     return true
   }
 
@@ -186,6 +190,7 @@ const Profile = () => {
     if (existingIndex !== -1) {
       if (!link?.length) {
         setFormData({ ...formData, social: [...updatedSocial?.filter(ele => ele.type !== type)] })
+
         return
       }
       updatedSocial[existingIndex] = { type, link }
@@ -452,8 +457,6 @@ const Profile = () => {
               label='Companies'
               variant='standard'
               fullWidth
-              // error={submitted && !formData?.companies?.length}
-              // helperText={submitted && !formData?.companies?.length ? 'Companies is required' : ''}
             >
               <MenuItem value={'0'}>0</MenuItem>
               <MenuItem value={'1-10'}>1-10</MenuItem>

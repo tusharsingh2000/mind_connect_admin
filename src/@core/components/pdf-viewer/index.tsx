@@ -1,10 +1,17 @@
+'use client'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import React, { Dispatch, SetStateAction } from 'react'
-// import DocViewer, { DocViewerRenderers } from 'react-doc-viewer'
+import { Document, Page, pdfjs } from 'react-pdf'
+
+//@ts-ignore
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
 const PDFViewer = ({
   title,
   open,
+  url,
   setOpen
 }: {
   url: string[]
@@ -12,12 +19,28 @@ const PDFViewer = ({
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
 }) => {
-  const files = [
-    {
-      uri: 'https://www.lehman.edu/faculty/john/classroomrespolicy1.docx',
-      filetpe: 'docx'
+  const fileExtension = url?.[0]?.split('.').pop()?.toLowerCase()
+
+  const showFile = () => {
+    if (fileExtension === 'pdf') {
+      return (
+        <Document file={url[0]}>
+          <Page pageNumber={1} />
+        </Document>
+      )
+    } else if (fileExtension === 'xlsx') {
+      // Render XLSX file
+      return <p>XLSX file: {url[0]}</p>
+    } else if (fileExtension === 'docx') {
+      // Render DOCX file
+      return <p>DOCX file: {url[0]}</p>
+    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension || '')) {
+      // Render image file
+      return <img style={{ height: '50%', width: '100%' }} src={url[0]} alt='Image' />
+    } else {
+      return <p>Unsupported file format</p>
     }
-  ]
+  }
 
   return (
     <Dialog
@@ -28,10 +51,7 @@ const PDFViewer = ({
     >
       <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
       <DialogContent>
-        <div style={{ width: '100%', minWidth: '30vw', height: '600px' }}>
-          {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={files} /> */}
-          {/* <iframe className={'pdf'} width='100%' height='600' src={url[0]}></iframe> */}
-        </div>
+        <div style={{ width: '100%', minWidth: '30vw', height: '600px' }}>{showFile()}</div>
       </DialogContent>
     </Dialog>
   )
