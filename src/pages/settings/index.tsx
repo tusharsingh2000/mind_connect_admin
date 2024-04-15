@@ -22,9 +22,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-hot-toast'
 import CustomTextField from 'src/@core/components/mui/text-field'
+import { isNumber, isValidInput } from 'src/utils/validations'
 
 const schema = yup.object().shape({
-  token: yup.string().required('This is a required field')
+  token: yup.string().required('This is a required field').max(6, 'Maximim 6 characters are allowed')
 })
 
 const defaultValues = {
@@ -175,12 +176,14 @@ const Settings = () => {
         <Box mb={5}>
           <TextField
             value={settingsData?.headline || ''}
-            onChange={val =>
-              setSettingsData({
-                ...settingsData,
-                headline: val.target.value
-              })
-            }
+            onChange={val => {
+              if (val?.target?.value?.length < 50 && isValidInput(val.target.value)) {
+                setSettingsData({
+                  ...settingsData,
+                  headline: val.target.value
+                })
+              }
+            }}
             label='Headline'
             variant='standard'
             fullWidth
@@ -191,12 +194,14 @@ const Settings = () => {
         <Box mb={5}>
           <TextField
             value={settingsData?.description || ''}
-            onChange={val =>
-              setSettingsData({
-                ...settingsData,
-                description: val.target.value
-              })
-            }
+            onChange={val => {
+              if (val.target.value?.length < 100 && isValidInput(val.target.value)) {
+                setSettingsData({
+                  ...settingsData,
+                  description: val.target.value
+                })
+              }
+            }}
             label='Description'
             variant='standard'
             fullWidth
@@ -207,12 +212,14 @@ const Settings = () => {
         <Box mb={5}>
           <TextField
             value={settingsData?.address || ''}
-            onChange={val =>
-              setSettingsData({
-                ...settingsData,
-                address: val.target.value
-              })
-            }
+            onChange={val => {
+              if (val.target.value?.length < 30 && isValidInput(val.target.value)) {
+                setSettingsData({
+                  ...settingsData,
+                  address: val.target.value
+                })
+              }
+            }}
             label='Company Address'
             variant='standard'
             fullWidth
@@ -223,12 +230,14 @@ const Settings = () => {
         <Box mb={5}>
           <TextField
             value={settingsData?.phone || ''}
-            onChange={val =>
-              setSettingsData({
-                ...settingsData,
-                phone: val.target.value
-              })
-            }
+            onChange={val => {
+              if (val.target.value?.length < 13 && isNumber(val.target.value)) {
+                setSettingsData({
+                  ...settingsData,
+                  phone: val.target.value
+                })
+              }
+            }}
             label='Phone Number'
             variant='standard'
             fullWidth

@@ -25,7 +25,7 @@ import { BASE_URL } from 'src/configs/auth'
 import Link from 'next/link'
 
 const schema = yup.object().shape({
-  name: yup.string().required('Name is a required field')
+  name: yup.string().required('Name is a required field').max(35, 'Maximum 35 characters are allowed')
 })
 
 const defaultValues = {

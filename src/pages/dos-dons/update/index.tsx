@@ -21,8 +21,8 @@ import { toast } from 'react-hot-toast'
 import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
-  heading: yup.string().required('Heading is a required field'),
-  description: yup.string().required('Description is a required field'),
+  heading: yup.string().required('Heading is a required field').max(35, 'Maximum 35 characters are allowed'),
+  description: yup.string().required('Description is a required field').max(50, 'Maximum 50 characters are allowed'),
   type: yup.string().required().not(['-1'], 'Type is a required field')
 })
 

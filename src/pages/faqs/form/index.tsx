@@ -20,8 +20,8 @@ import { post } from 'src/utils/AxiosMethods'
 import { toast } from 'react-hot-toast'
 
 const schema = yup.object().shape({
-  question: yup.string().required('Question is a required field'),
-  answer: yup.string().required('Answer is a required field'),
+  question: yup.string().required('Question is a required field').max(35, 'Maximum 35 characters are allowed'),
+  answer: yup.string().required('Answer is a required field').max(35, 'Maximum 35 characters are allowed'),
   type: yup.string().required().not(['no'], 'Type is a required field')
 })
 

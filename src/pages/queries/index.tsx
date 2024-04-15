@@ -128,7 +128,7 @@ const Queries = () => {
     {
       flex: 0.2,
       minWidth: 110,
-      headerAlign: 'center',
+      headerAlign: 'left',
       field: 'age',
       headerName: 'Query',
       renderCell: (params: GridRenderCellParams) => {

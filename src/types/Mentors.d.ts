@@ -34,6 +34,11 @@ export interface MentorDetail {
     createdAt: string
     updatedAt: string
   }[]
+  mentees: {
+    _id: string
+    firstName: string
+    lastName: string
+  }[]
   createdAt: string
   updatedAt: string
   user: {

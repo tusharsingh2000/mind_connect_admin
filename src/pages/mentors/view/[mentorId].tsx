@@ -94,21 +94,20 @@ const Mentees = () => {
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={12} md={4} display='flex' alignItems={'center'}>
+      <Grid item xs={12} md={6} display='flex' alignItems={'center'}>
         <Box>
           <Typography ml={2.5} color={'#7A7A7A'}>
             Matched with
           </Typography>
-          <Typography ml={2.5} fontSize={26} fontWeight={700}>
-            Oliver John
-          </Typography>
-          <AssignMenteeForm />
+          {data?.mentees?.map(item => (
+            <Typography key={item._id} ml={2.5} fontSize={20} fontWeight={700}>
+              {`${item?.firstName || ''} ${item?.lastName || ''}`}
+            </Typography>
+          ))}
+          {!data?.mentees?.length || data?.mentees?.length < 3 ? (
+            <AssignMenteeForm getMentor={getMentor} mentorId={router?.query?.mentorId || ''} />
+          ) : null}
         </Box>
-      </Grid>
-      <Grid item xs={12} md={2} display='flex' flexDirection='column' gap={5}>
-        <Button color='success' size='large' variant='contained'>
-          Publish
-        </Button>
       </Grid>
       <Grid item xs={12}>
         <Divider />

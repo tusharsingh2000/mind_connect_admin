@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from 'react-pdf'
 
 //@ts-ignore
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+import { Icon } from '@iconify/react'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 

@@ -19,11 +19,25 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/bootstrap.css'
 import { post } from 'src/utils/AxiosMethods'
+import { toast } from 'react-hot-toast'
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('This is a required field'),
-  lastName: yup.string().required('This is a required field'),
-  email: yup.string().email().min(6, 'Email must be at least 6 characters').required('This is a required field')
+  firstName: yup
+    .string()
+    .matches(/^[^0-9]*$/, 'First name should not contain numbers')
+    .required('This is a required field')
+    .max(35, 'Maximum 35 characters are allowed'),
+  lastName: yup
+    .string()
+    .matches(/^[^0-9]*$/, 'Last name should not contain numbers')
+    .required('This is a required field')
+    .max(35, 'Maximum 35 characters are allowed'),
+  email: yup
+    .string()
+    .email()
+    .min(6, 'Email must be at least 6 characters')
+    .required('This is a required field')
+    .max(35, 'Maximum 35 characters are allowed')
 })
 
 const defaultValues = {
@@ -53,7 +67,8 @@ const AsiignMenteeForm = () => {
   const {
     control,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
+    resetField
   } = useForm({
     defaultValues,
     mode: 'onSubmit',
@@ -79,7 +94,16 @@ const AsiignMenteeForm = () => {
         countryCode,
         countryCodeIso
       })
-      console.log(response)
+      if (response) {
+        toast.success('Invitation sent to mentor')
+        resetField('email')
+        resetField('firstName')
+        resetField('lastName')
+        setPhone('')
+        setCountryCode('+49')
+        setCountryCodeIso('de')
+        setOpen(false)
+      }
     } catch (error) {
       console.log(error)
     }

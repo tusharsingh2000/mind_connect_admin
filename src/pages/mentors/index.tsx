@@ -241,7 +241,7 @@ const Mentors = () => {
           <Button
             onClick={() => {
               setOpen(true)
-              setActiveId(params?.row?.user?._id || '')
+              setActiveId(params?.row?._id || '')
             }}
           >
             <Icon icon='material-symbols:delete-outline' />
@@ -281,6 +281,7 @@ const Mentors = () => {
         getMentors()
       }
     } catch (error: any) {
+      setIsLoading(false)
       console.log(error)
     }
   }
@@ -313,6 +314,7 @@ const Mentors = () => {
         })
       }
     } catch (error) {
+      setIsLoading(false)
       console.log(error)
     }
   }
