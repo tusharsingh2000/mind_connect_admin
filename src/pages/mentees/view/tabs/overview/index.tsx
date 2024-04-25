@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
   Typography
 } from '@mui/material'
 import { format } from 'date-fns'
@@ -311,10 +312,13 @@ const OverView = ({ data }: { data: Mentee | null }) => {
         </Grid>
       </Grid>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
-        <DialogTitle id='form-dialog-title'>
+        <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography fontSize={24} fontWeight={600}>
             Documents
           </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon icon='ri:close-fill' height={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <Box display={'flex'} flexWrap='wrap'>

@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 
 // ** Custom Component Import
 import { Box } from '@mui/system'
-import { MenuItem, Typography } from '@mui/material'
+import { IconButton, MenuItem, Typography } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Third Party Imports
@@ -22,7 +22,7 @@ import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
   heading: yup.string().required('Heading is a required field').max(35, 'Maximum 35 characters are allowed'),
-  description: yup.string().required('Description is a required field').max(50, 'Maximum 50 characters are allowed'),
+  description: yup.string().required('Description is a required field').max(250, 'Maximum 250 characters are allowed'),
   type: yup.string().required().not(['-1'], 'Type is a required field')
 })
 
@@ -86,10 +86,13 @@ const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refe
         <Icon fontSize={20} icon='carbon:edit' />
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
-        <DialogTitle id='form-dialog-title'>
+        <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography fontSize={24} fontWeight={600}>
             Do's & Dont's
           </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon icon='ri:close-fill' height={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
@@ -116,7 +119,7 @@ const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refe
                         Select
                       </MenuItem>
                       <MenuItem value={0}>Do</MenuItem>
-                      <MenuItem value={1}>Don</MenuItem>
+                      <MenuItem value={1}>Don't</MenuItem>
                     </CustomTextField>
                   )}
                 />
@@ -149,6 +152,8 @@ const UpdateDosForm = ({ id, data, refetch }: { id: string; data: FormData; refe
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
+                      multiline
+                      rows={5}
                       label='Update Description'
                       value={value}
                       onBlur={onBlur}

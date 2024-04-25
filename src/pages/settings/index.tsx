@@ -22,7 +22,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-hot-toast'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { isNumber, isValidInput } from 'src/utils/validations'
+import { isValidInput } from 'src/utils/validations'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/bootstrap.css'
 
 const schema = yup.object().shape({
   token: yup.string().required('This is a required field').max(6, 'Maximim 6 characters are allowed')
@@ -49,6 +51,9 @@ const Settings = () => {
     phone: ''
   })
 
+  const [countryCode, setCountryCode] = useState<string>('+49')
+  const [countryCodeIso, setCountryCodeIso] = useState<string>('de')
+
   const handleClickOpen = () => setOpen(true)
 
   const handleClose = () => setOpen(false)
@@ -63,6 +68,15 @@ const Settings = () => {
     mode: 'onSubmit',
     resolver: yupResolver(schema)
   })
+
+  const handleChangePhone = (phoneNum: any, country: any) => {
+    setSettingsData({
+      ...settingsData,
+      phone: phoneNum?.replace(country.dialCode, '')
+    })
+    setCountryCode(`+${country?.dialCode || ''}`)
+    setCountryCodeIso(`+${country?.countryCode || ''}`)
+  }
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -142,7 +156,7 @@ const Settings = () => {
 
   const updateSettings = async () => {
     try {
-      const response = await post(`${BASE_URL}/admin/settings`, settingsData)
+      const response = await post(`${BASE_URL}/admin/settings`, { ...settingsData, countryCode, countryCodeIso })
       if (response) {
         toast.success('Updated Successfully')
       }
@@ -195,7 +209,7 @@ const Settings = () => {
           <TextField
             value={settingsData?.description || ''}
             onChange={val => {
-              if (val.target.value?.length < 100 && isValidInput(val.target.value)) {
+              if (val.target.value?.length < 250 && isValidInput(val.target.value)) {
                 setSettingsData({
                   ...settingsData,
                   description: val.target.value
@@ -213,7 +227,7 @@ const Settings = () => {
           <TextField
             value={settingsData?.address || ''}
             onChange={val => {
-              if (val.target.value?.length < 30 && isValidInput(val.target.value)) {
+              if (val.target.value?.length < 50 && isValidInput(val.target.value)) {
                 setSettingsData({
                   ...settingsData,
                   address: val.target.value
@@ -228,19 +242,23 @@ const Settings = () => {
       </Grid>
       <Grid item xs={12}>
         <Box mb={5}>
-          <TextField
-            value={settingsData?.phone || ''}
-            onChange={val => {
-              if (val.target.value?.length < 13 && isNumber(val.target.value)) {
-                setSettingsData({
-                  ...settingsData,
-                  phone: val.target.value
-                })
-              }
+          <label style={{ fontSize: 12, color: '#858585' }}>Phone Number</label>
+          <PhoneInput
+            enableSearch={true}
+            value={countryCode + settingsData?.phone}
+            country={'us'}
+            inputStyle={{
+              width: '100%',
+              height: 20,
+              backgroundColor: 'transparent',
+              borderWidth: 0,
+              borderBottomWidth: 1,
+              borderRadius: 0
             }}
-            label='Phone Number'
-            variant='standard'
-            fullWidth
+            inputClass='form-control'
+            buttonClass='phoneBtn'
+            placeholder=''
+            onChange={(phone, country) => handleChangePhone(phone, country)}
           />
         </Box>
       </Grid>

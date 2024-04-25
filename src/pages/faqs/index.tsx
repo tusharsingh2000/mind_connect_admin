@@ -166,9 +166,11 @@ const FAQs = () => {
                 {faqs?.length ? (
                   faqs?.map((item, index) => <Faq key={item?._id || index} faq={item} />)
                 ) : (
-                  <Typography fontSize={14} m={5}>
-                    No data found
-                  </Typography>
+                  <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography fontSize={14} m={5}>
+                      No data found
+                    </Typography>
+                  </Box>
                 )}
               </>
             )}

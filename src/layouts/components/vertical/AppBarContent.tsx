@@ -10,6 +10,7 @@ import { Settings } from 'src/@core/context/settingsContext'
 
 // ** Components
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
+import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 
 interface Props {
@@ -35,6 +36,7 @@ const AppBarContent = (props: Props) => {
         <ModeToggler settings={settings} saveSettings={saveSettings} />
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+        <NotificationDropdown notifications={[]} settings={settings} />
         <UserDropdown settings={settings} />
       </Box>
     </Box>

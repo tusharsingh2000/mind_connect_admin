@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 
 // ** Custom Component Import
 import { Box } from '@mui/system'
-import { Typography } from '@mui/material'
+import { IconButton, Typography } from '@mui/material'
 
 // ** Third Party Imports
 import * as yup from 'yup'
@@ -20,6 +20,7 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/bootstrap.css'
 import { post } from 'src/utils/AxiosMethods'
 import { toast } from 'react-hot-toast'
+import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
   firstName: yup
@@ -95,7 +96,7 @@ const AsiignMenteeForm = () => {
         countryCodeIso
       })
       if (response) {
-        toast.success('Invitation sent to mentor')
+        toast.success('Mentor created successfully')
         resetField('email')
         resetField('firstName')
         resetField('lastName')
@@ -115,10 +116,13 @@ const AsiignMenteeForm = () => {
         + Add new Mentor
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
-        <DialogTitle id='form-dialog-title'>
+        <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography fontSize={24} fontWeight={600}>
             Add Mentor
           </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon icon='ri:close-fill' height={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>

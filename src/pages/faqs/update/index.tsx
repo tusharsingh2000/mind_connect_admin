@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 
 // ** Custom Component Import
 import { Box } from '@mui/system'
-import { MenuItem, Typography } from '@mui/material'
+import { IconButton, MenuItem, Typography } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Third Party Imports
@@ -22,7 +22,7 @@ import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
   question: yup.string().required('Question is a required field').max(35, 'Maximum 35 characters are allowed'),
-  answer: yup.string().required('Answer is a required field').max(35, 'Maximum 35 characters are allowed'),
+  answer: yup.string().required('Answer is a required field').max(250, 'Maximum 250 characters are allowed'),
   type: yup.string().required().not(['no'], 'Type is a required field')
 })
 
@@ -86,10 +86,13 @@ const UpdateFaqForm = ({ id, data, refetch }: { id: string; data: FormData; refe
         <Icon fontSize={20} icon='carbon:edit' />
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
-        <DialogTitle id='form-dialog-title'>
+        <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography fontSize={24} fontWeight={600}>
             FAQ
           </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon icon='ri:close-fill' height={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
@@ -149,6 +152,8 @@ const UpdateFaqForm = ({ id, data, refetch }: { id: string; data: FormData; refe
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
+                      multiline
+                      rows={5}
                       label='Update Answer'
                       value={value}
                       onBlur={onBlur}

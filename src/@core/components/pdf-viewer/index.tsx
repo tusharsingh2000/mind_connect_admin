@@ -1,12 +1,8 @@
 'use client'
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Box, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import React, { Dispatch, SetStateAction } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
 
-//@ts-ignore
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
+import { Icon } from '@iconify/react'
 
 const PDFViewer = ({
   title,
@@ -22,23 +18,20 @@ const PDFViewer = ({
   const fileExtension = url?.[0]?.split('.').pop()?.toLowerCase()
 
   const showFile = () => {
-    if (fileExtension === 'pdf') {
+    if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension || '')) {
       return (
-        <Document file={url[0]}>
-          <Page pageNumber={1} />
-        </Document>
+        <figure>
+          <img style={{ height: '100%', width: '100%' }} src={url[0]} alt='Image' />
+        </figure>
       )
-    } else if (fileExtension === 'xlsx') {
-      // Render XLSX file
-      return <p>XLSX file: {url[0]}</p>
-    } else if (fileExtension === 'docx') {
-      // Render DOCX file
-      return <p>DOCX file: {url[0]}</p>
-    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension || '')) {
-      // Render image file
-      return <img style={{ height: '50%', width: '100%' }} src={url[0]} alt='Image' />
     } else {
-      return <p>Unsupported file format</p>
+      return (
+        <iframe
+          height={'100%'}
+          width={'100%'}
+          src={`https://docs.google.com/gview?url=${url[0]}&embedded=true`}
+        ></iframe>
+      )
     }
   }
 
@@ -49,7 +42,12 @@ const PDFViewer = ({
       aria-labelledby='alert-dialog-title'
       aria-describedby='alert-dialog-description'
     >
-      <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
+      <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box>{title}</Box>
+        <IconButton onClick={() => setOpen(false)}>
+          <Icon icon='ri:close-fill' height={20} />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <div style={{ width: '100%', minWidth: '30vw', height: '600px' }}>{showFile()}</div>
       </DialogContent>

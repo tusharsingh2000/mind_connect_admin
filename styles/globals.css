@@ -22,3 +22,8 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+
+.react-tel-input .form-control:focus {
+  border-bottom: 1px solid #cacaca !important;
+  box-shadow: none !important;
+}

@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 
 // ** Custom Component Import
 import { Box } from '@mui/system'
-import { MenuItem, Typography } from '@mui/material'
+import { IconButton, MenuItem, Typography } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Third Party Imports
@@ -18,10 +18,11 @@ import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { post } from 'src/utils/AxiosMethods'
 import { toast } from 'react-hot-toast'
+import { Icon } from '@iconify/react'
 
 const schema = yup.object().shape({
   heading: yup.string().required('Heading is a required field').max(35, 'Maximum 35 characters are allowed'),
-  description: yup.string().required('Description is a required field').max(50, 'Maximum 50 characters are allowed'),
+  description: yup.string().required('Description is a required field').max(250, 'Maximum 250 characters are allowed'),
   type: yup.string().required().not(['-1'], 'Type is a required field')
 })
 
@@ -78,10 +79,13 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
         + Add Do's & Dont's
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
-        <DialogTitle id='form-dialog-title'>
+        <DialogTitle id='form-dialog-title' sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography fontSize={24} fontWeight={600}>
             Do's & Dont's
           </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon icon='ri:close-fill' height={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
@@ -108,7 +112,7 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                         Select
                       </MenuItem>
                       <MenuItem value={0}>Do</MenuItem>
-                      <MenuItem value={1}>Dont</MenuItem>
+                      <MenuItem value={1}>Don't</MenuItem>
                     </CustomTextField>
                   )}
                 />
@@ -142,6 +146,8 @@ const AddDosForm = ({ refetch }: { refetch: () => {} }) => {
                     <CustomTextField
                       fullWidth
                       label='Add Description'
+                      multiline
+                      rows={5}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}

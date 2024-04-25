@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://thefuturecompanies.com/pv_mentor/v1'
+export const BASE_URL = 'https://pv-mentor-api.dev-node.futuredoctor.group/v1'
 
 export default {
   meEndpoint: '/auth/me',

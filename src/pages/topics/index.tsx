@@ -93,11 +93,34 @@ const Topics = () => {
           ) : (
             <>
               {list?.length ? (
-                list?.map((item, index) => <DoDo key={index} dodo={item} />)
+                <Box>
+                  <Box sx={{ display: 'flex', width: '50%' }} mb={5}>
+                    <Box sx={{ width: '15%', textAlign: 'center' }}>
+                      <Typography fontSize={16} fontWeight={600}>
+                        Image
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: '60%', textAlign: 'center' }}>
+                      <Typography fontSize={16} fontWeight={600}>
+                        Title
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: '20%', textAlign: 'center' }}>
+                      <Typography fontSize={16} fontWeight={600}>
+                        Action
+                      </Typography>
+                    </Box>
+                  </Box>
+                  {list?.map((item, index) => (
+                    <DoDo key={index} dodo={item} />
+                  ))}
+                </Box>
               ) : (
-                <Typography fontSize={14} m={5}>
-                  No data found
-                </Typography>
+                <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
+                  <Typography fontSize={14} m={5}>
+                    No data found
+                  </Typography>
+                </Box>
               )}
             </>
           )}

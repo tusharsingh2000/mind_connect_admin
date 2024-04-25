@@ -73,21 +73,6 @@ const PageHeader = (props: PageHeaderProps) => {
             )
           }}
         />
-        <Box
-          sx={{
-            border: '1px solid rgba(208, 212, 241, 0.5)',
-            height: 45,
-            width: 52,
-            marginLeft: 2,
-            borderRadius: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-        >
-          <Icon color='rgba(47, 43, 61, 0.5)' fontSize={24} icon='clarity:notification-line' />
-        </Box>
       </Grid>
     </Grid>
   )

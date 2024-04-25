@@ -7,6 +7,7 @@ import { DataGrid, GridColDef, GridColumnVisibilityModel } from '@mui/x-data-gri
 
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
+import { Box, Typography } from '@mui/material'
 
 // // ** Data Import
 // import rows from './data.json'
@@ -36,26 +37,34 @@ const TableColumns = ({
   const [hideNameColumn, setHideNameColumn] = useState<GridColumnVisibilityModel>({ full_name: true })
 
   return (
-    <Card>
-      <DataGrid
-        autoHeight
-        rows={rows}
-        columns={columns}
-        disableRowSelectionOnClick
-        pageSizeOptions={[7, 10, 25, 50]}
-        paginationModel={paginationModel}
-        paginationMode='server'
-        getRowId={row => row?._id}
-        rowCount={total || 0}
-        columnVisibilityModel={hideNameColumn}
-        onPaginationModelChange={setPaginationModel}
-        onColumnVisibilityModelChange={newValue => setHideNameColumn(newValue)}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-      />
-    </Card>
+    <Box>
+      {rows?.length ? (
+        <Card>
+          <DataGrid
+            autoHeight
+            rows={rows}
+            columns={columns}
+            disableRowSelectionOnClick
+            pageSizeOptions={[7, 10, 25, 50]}
+            paginationModel={paginationModel}
+            paginationMode='server'
+            getRowId={row => row?._id}
+            rowCount={total || 0}
+            columnVisibilityModel={hideNameColumn}
+            onPaginationModelChange={setPaginationModel}
+            onColumnVisibilityModelChange={newValue => setHideNameColumn(newValue)}
+            disableColumnFilter
+            disableColumnMenu
+            disableColumnSelector
+            disableDensitySelector
+          />
+        </Card>
+      ) : (
+        <Box sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography>No data found</Typography>
+        </Box>
+      )}
+    </Box>
   )
 }
 

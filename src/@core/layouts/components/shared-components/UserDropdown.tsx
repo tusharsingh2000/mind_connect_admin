@@ -114,7 +114,7 @@ const UserDropdown = (props: Props) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }}
       >
-        <Box sx={{ py: 1.75, px: 6 }}>
+        {/* <Box sx={{ py: 1.75, px: 6 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Badge
               overlap='circular'
@@ -131,7 +131,7 @@ const UserDropdown = (props: Props) => {
               <Typography variant='body2'>Admin</Typography>
             </Box>
           </Box>
-        </Box>
+        </Box> */}
         {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
         {/* <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
@@ -170,7 +170,7 @@ const UserDropdown = (props: Props) => {
             Pricing
           </Box>
         </MenuItemStyled> */}
-        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
+        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
         <MenuItemStyled sx={{ p: 0 }} onClick={handleLogout}>
           <Box sx={styles}>
             <Icon icon='tabler:logout' />

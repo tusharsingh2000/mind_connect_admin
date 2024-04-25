@@ -83,3 +83,11 @@ export interface Status {
   label: string
   color: 'default' | 'success' | 'info' | 'error' | 'primary' | 'secondary' | 'warning' | undefined
 }
+
+export interface Notifications {
+  _id: string
+  title: string
+  body: string
+  isRead: boolean
+  createdAt: string
+}

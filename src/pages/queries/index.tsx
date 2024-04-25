@@ -16,6 +16,7 @@ import TableColumns from 'src/@core/components/table'
 import { isValidInput } from 'src/utils/validations'
 import PageHeader from 'src/@core/components/page-header'
 import UpdateQuery from './update'
+import Link from 'next/link'
 
 // ** renders client column
 const renderClient = (params: GridRenderCellParams) => {
@@ -73,25 +74,27 @@ const Queries = () => {
         const { row } = params
 
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            {renderClient(params)}
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                '&:hover': {
-                  textDecoration: 'underline'
-                }
-              }}
-            >
-              <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                {`${row?.userId?.firstName || ''} ${row?.userId?.lastName || ''}`}
-              </Typography>
-              <Typography noWrap variant='caption'>
-                {row?.userId?.email || ''}
-              </Typography>
+          <Link href={`mentees/view/${row?.userId?._id}`} style={{ textDecoration: 'none' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              {renderClient(params)}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  '&:hover': {
+                    textDecoration: 'underline'
+                  }
+                }}
+              >
+                <Typography noWrap variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+                  {`${row?.userId?.firstName || ''} ${row?.userId?.lastName || ''}`}
+                </Typography>
+                <Typography noWrap variant='caption'>
+                  {row?.userId?.email || ''}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
+          </Link>
         )
       }
     },
