@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** Next Imports
 import Head from 'next/head'
@@ -58,6 +58,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import firebaseApp from 'src/utils/firebase'
+import useFcmToken from 'src/utils/useFcm'
+import { getMessaging, onMessage } from 'firebase/messaging'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -98,6 +101,7 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
 
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
+  const { fcmToken, notificationPermissionStatus } = useFcmToken()
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables
@@ -112,6 +116,32 @@ const App = (props: ExtendedAppProps) => {
   const guestGuard = Component.guestGuard ?? false
 
   const aclAbilities = Component.acl ?? defaultACLObj
+
+  // Use the token as needed
+  fcmToken && console.log('FCM token:', fcmToken)
+
+  console.log(notificationPermissionStatus)
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      const messaging = getMessaging(firebaseApp)
+      const unsubscribe = onMessage(messaging, payload => {
+        console.log('Foreground push notification received:', payload)
+        const notificationTitle: string | undefined = payload.notification?.title
+        const notificationBody: string | undefined = payload.notification?.body
+        const notificationOptions = {
+          body: notificationBody,
+          icon: '/favicon.ico'
+        }
+
+        new Notification(notificationTitle || '', notificationOptions)
+      })
+      return () => {
+        unsubscribe() // Unsubscribe from the onMessage event
+      }
+    }
+  }, [])
 
   return (
     <CacheProvider value={emotionCache}>

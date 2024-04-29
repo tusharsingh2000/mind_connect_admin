@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://pv-mentor-api.dev-node.futuredoctor.group/v1'
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export default {
   meEndpoint: '/auth/me',
