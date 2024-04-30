@@ -120,8 +120,6 @@ const App = (props: ExtendedAppProps) => {
   // Use the token as needed
   fcmToken && console.log('FCM token:', fcmToken)
 
-  console.log(notificationPermissionStatus)
-
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {

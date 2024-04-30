@@ -3,6 +3,8 @@ export type ErrCallbackType = (err: { [key: string]: string }) => void
 export type LoginParams = {
   username: string
   token?: string
+  deviceType?: string
+  deviceToken?: string
   password: string
   role: string
   rememberMe?: boolean

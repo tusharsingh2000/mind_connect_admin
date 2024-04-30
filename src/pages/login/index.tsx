@@ -33,6 +33,7 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { get } from 'src/utils/AxiosMethods'
 import { BASE_URL } from 'src/configs/auth'
 import { toast } from 'react-hot-toast'
+import useFcmToken from 'src/utils/useFcm'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -86,6 +87,7 @@ const LoginPage = () => {
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
+  const { fcmToken, notificationPermissionStatus } = useFcmToken()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -104,9 +106,12 @@ const LoginPage = () => {
 
   const onSubmit = (data: FormData) => {
     const { username, password, token } = data
-    auth.login({ username, password, rememberMe: true, role: 'Mentee', token }, (error: any) => {
-      toast.error(error?.response?.data?.message || '')
-    })
+    auth.login(
+      { username, password, rememberMe: true, role: 'Mentee', token, deviceType: 'WEB', deviceToken: fcmToken },
+      (error: any) => {
+        toast.error(error?.response?.data?.message || '')
+      }
+    )
   }
 
   const check2FA = async () => {
