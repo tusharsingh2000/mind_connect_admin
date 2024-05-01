@@ -135,10 +135,10 @@ const Mentees = () => {
           flexDirection={'column'}
           mr={5}
         >
-          <Typography fontSize={16} fontWeight={500}>
+          <Typography color={'rgba(47, 43, 61, 0.78)'} fontSize={16} fontWeight={500}>
             AI Rate
           </Typography>
-          <Typography fontSize={32} fontWeight={800}>
+          <Typography color={'rgba(47, 43, 61, 0.78)'} fontSize={32} fontWeight={800}>
             0%
           </Typography>
         </Box>

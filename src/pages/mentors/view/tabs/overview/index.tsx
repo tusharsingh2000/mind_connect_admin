@@ -121,10 +121,10 @@ const OverView = ({ data }: { data: null | MentorDetail }) => {
           md={3.8}
           xs={12}
         >
-          <Typography fontSize={18} fontWeight={400}>
+          <Typography color={'rgba(47, 43, 61, 0.78)'} fontSize={18} fontWeight={400}>
             {item.label}
           </Typography>
-          <Typography fontSize={48} fontWeight={900}>
+          <Typography color={'rgba(47, 43, 61, 0.78)'} fontSize={48} fontWeight={900}>
             {item.value}
           </Typography>
         </Grid>

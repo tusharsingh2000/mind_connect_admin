@@ -139,7 +139,7 @@ const NotificationDropdown = (props: Props) => {
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
 
   // ** Vars
-  const { direction } = settings
+  const { direction, mode } = settings
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -233,7 +233,11 @@ const NotificationDropdown = (props: Props) => {
               </Typography>
             </Box>
           ) : null}
-          <Icon color='rgba(47, 43, 61, 0.5)' fontSize={24} icon='clarity:notification-line' />
+          <Icon
+            color={mode === 'light' ? 'rgba(47, 43, 61, 0.5)' : 'rgba(208, 212, 241, 0.5)'}
+            fontSize={24}
+            icon='clarity:notification-line'
+          />
         </Box>
       </IconButton>
       <Menu
