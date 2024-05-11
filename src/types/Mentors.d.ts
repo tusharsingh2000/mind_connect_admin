@@ -4,6 +4,7 @@ export interface Mentors {
   lastName: string
   email: string
   isBlocked: boolean
+  profileCompleted: boolean
   createdAt: string
   active: boolean
   bookingCount: number

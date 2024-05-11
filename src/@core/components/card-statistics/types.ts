@@ -1,5 +1,4 @@
 // ** Types
-import { ApexOptions } from 'apexcharts'
 import { ChipProps } from '@mui/material/Chip'
 import { SxProps, Theme } from '@mui/material'
 import { ThemeColor } from 'src/@core/layouts/types'
@@ -33,7 +32,6 @@ export type CardStatsWithAreaChartProps = {
   chartColor?: ThemeColor
   avatarColor?: ThemeColor
   avatarIconSize?: number | string
-  chartSeries: ApexOptions['series']
 }
 
 export type CardStatsVerticalProps = {

@@ -145,7 +145,7 @@ const Mentors = () => {
         const { row } = params
 
         return (
-          <Link href={`mentors/view/${row?._id}`} style={{ textDecoration: 'none' }}>
+          <Link href={row?.profileCompleted ? `mentors/view/${row?._id}` : ''} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box

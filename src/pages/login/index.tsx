@@ -87,7 +87,7 @@ const LoginPage = () => {
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
-  const { fcmToken, notificationPermissionStatus } = useFcmToken()
+  const { fcmToken } = useFcmToken()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 

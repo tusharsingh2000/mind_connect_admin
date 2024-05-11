@@ -101,7 +101,7 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
 
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
-  const { fcmToken, notificationPermissionStatus } = useFcmToken()
+  const { fcmToken } = useFcmToken()
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables
@@ -135,6 +135,7 @@ const App = (props: ExtendedAppProps) => {
 
         new Notification(notificationTitle || '', notificationOptions)
       })
+
       return () => {
         unsubscribe() // Unsubscribe from the onMessage event
       }

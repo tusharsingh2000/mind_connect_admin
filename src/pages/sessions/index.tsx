@@ -480,7 +480,7 @@ const Sessions = () => {
         const { row } = params
 
         return (
-          <Link href={`mentors/view/${row?.mentor?._id}`} style={{ textDecoration: 'none' }}>
+          <Link href={row?.mentor?.profileCompleted ? `mentors/view/${row?.mentor?._id}` : ''} style={{ textDecoration: 'none' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               {renderClient(params)}
               <Box
