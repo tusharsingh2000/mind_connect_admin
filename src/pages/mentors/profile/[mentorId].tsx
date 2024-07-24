@@ -119,8 +119,8 @@ const Profile = () => {
         display='inline'
         borderRadius={1}
         sx={{
-          backgroundColor: selected > -1 ? '#EA7A20' : '#FFF3EA',
-          color: selected > -1 ? '#FFF' : '#EA7A20'
+          backgroundColor: selected > -1 ? '#3460AE' : '#FFF3EA',
+          color: selected > -1 ? '#FFF' : '#3460AE'
         }}
         fontSize={12}
         onClick={() => {
@@ -287,7 +287,7 @@ const Profile = () => {
               position: 'relative'
             }}
           >
-            <Icon color='#EA7A20' fontSize={50} icon='teenyicons:user-solid' />
+            <Icon color='#3460AE' fontSize={50} icon='teenyicons:user-solid' />
             <Box
               sx={{
                 background: 'white',
@@ -302,7 +302,7 @@ const Profile = () => {
                 borderRadius: 100
               }}
             >
-              <Icon fontSize={16} color='#EA7A20' icon='fa-regular:edit' />
+              <Icon fontSize={16} color='#3460AE' icon='fa-regular:edit' />
             </Box>
           </Box>
         )}

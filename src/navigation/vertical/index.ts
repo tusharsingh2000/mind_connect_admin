@@ -9,14 +9,24 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mage:dashboard-fill'
     },
     {
-      title: 'Mentees',
+      title: 'Users',
       path: '/mentees',
       icon: 'teenyicons:users-solid'
     },
     {
-      title: 'Mentors',
+      title: 'Consultants',
       path: '/mentors',
       icon: 'carbon:user-filled'
+    },
+    {
+      title: 'Categories',
+      path: '/',
+      icon: 'carbon:category'
+    },
+    {
+      title: 'Sub-Categories',
+      path: '/',
+      icon: 'carbon:category'
     },
     {
       title: `Do's & Dont's`,

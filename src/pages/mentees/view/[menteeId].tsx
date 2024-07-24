@@ -114,7 +114,7 @@ const Mentees = () => {
             <Icon
               fontSize={32}
               style={{ position: 'absolute', top: 2 }}
-              color='#EA7A20'
+              color='#3460AE'
               icon='bitcoin-icons:verify-filled'
             />
           </Typography>

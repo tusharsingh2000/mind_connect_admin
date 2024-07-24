@@ -189,7 +189,7 @@ const NotificationDropdown = (props: Props) => {
                 position: 'absolute',
                 top: -8,
                 right: -8,
-                background: '#EA7A20',
+                background: '#3460AE',
                 height: 20,
                 width: 20,
                 display: 'flex',
@@ -234,7 +234,7 @@ const NotificationDropdown = (props: Props) => {
             <MenuItem key={index} disableRipple disableTouchRipple onClick={handleDropdownClose}>
               <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                 {notification?.isRead ? null : (
-                  <Box sx={{ height: 10, width: 10, background: '#EA7A20', borderRadius: 100 }} />
+                  <Box sx={{ height: 10, width: 10, background: '#3460AE', borderRadius: 100 }} />
                 )}
                 <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
                   <MenuItemTitle>{notification?.title || ''}</MenuItemTitle>

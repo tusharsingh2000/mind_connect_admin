@@ -145,7 +145,7 @@ const App = (props: ExtendedAppProps) => {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>PV Mentoring Dashboard</title>
+        <title>Mind Connect Dashboard</title>
         <meta name='description' content='PV Mentoring UAT' />
         <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />

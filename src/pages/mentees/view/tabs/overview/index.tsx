@@ -107,7 +107,7 @@ const OverView = ({ data }: { data: Mentee | null }) => {
             justifyContent: 'center'
           }}
         >
-          <Icon fontSize={24} color='#EA7A20' icon='system-uicons:document' />
+          <Icon fontSize={24} color='#3460AE' icon='system-uicons:document' />
         </Box>
         <Box>
           <Typography fontSize={14} mb={1}>

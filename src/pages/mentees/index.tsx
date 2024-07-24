@@ -356,7 +356,7 @@ const Mentees = () => {
   return (
     <Grid container spacing={6}>
       <PageHeader
-        title='MENTEES'
+        title='USERS'
         searchTerm={searchTerm}
         setDebouncedSearchTerm={setDebouncedSearchTerm}
         paginationModel={paginationModel}

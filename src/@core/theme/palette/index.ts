@@ -39,7 +39,7 @@ const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
     },
     primary: {
       light: '#FFF3EA',
-      main: '#EA7A20',
+      main: '#3460AE',
       dark: '#cc6e1a',
       contrastText: whiteColor
     },
