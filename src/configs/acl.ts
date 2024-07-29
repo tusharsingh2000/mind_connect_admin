@@ -1,4 +1,4 @@
-import { AbilityBuilder, Ability } from '@casl/ability'
+import { Ability, AbilityBuilder } from '@casl/ability'
 
 export type Subjects = string
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete'
@@ -18,6 +18,8 @@ export type ACLObj = {
  */
 const defineRulesFor = (role: string, subject: string) => {
   const { can, rules } = new AbilityBuilder(AppAbility)
+
+  console.log({ role })
 
   if (role === 'ADMIN') {
     can('manage', 'all')

@@ -1,5 +1,5 @@
 // ** React Imports
-import { createContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -11,8 +11,8 @@ import axios from 'axios'
 import authConfig, { BASE_URL } from 'src/configs/auth'
 
 // ** Types
-import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
 import { toast } from 'react-hot-toast'
+import { AuthValuesType, ErrCallbackType, LoginParams, UserDataType } from './types'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -81,18 +81,14 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    delete params.rememberMe
-    if (!params?.token?.length) {
-      delete params.token
-    }
     axios
-      .post(`${BASE_URL}/auth/admin/login`, params)
+      .post(`${BASE_URL}login`, params)
       .then(async response => {
-        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
+        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.data.token)
         const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.user })
-        window.localStorage.setItem('userData', JSON.stringify(response.data.user))
+        setUser({ ...response.data.data })
+        window.localStorage.setItem('userData', JSON.stringify(response.data.data))
 
         toast.success('Logged in successfully')
 

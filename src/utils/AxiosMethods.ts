@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import { toast } from 'react-hot-toast'
 import authConfig, { BASE_URL } from 'src/configs/auth'
 
@@ -125,7 +125,7 @@ const formDataPut = async <T>(url: string, data: any): Promise<T | undefined> =>
 const fileUpload = async <T>(url: string, file: File): Promise<T | undefined> => {
   try {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('image', file)
 
     const response = await apiService.post<T>(url, formData, { headers: getFormDataHeader() })
 
@@ -138,8 +138,8 @@ const fileUpload = async <T>(url: string, file: File): Promise<T | undefined> =>
 const uploadFile = async (files: File[]) => {
   if (files && files.length > 0) {
     const file = files[0]
-    
-return await fileUpload(`${BASE_URL}/media`, file)
+
+    return await fileUpload(`${BASE_URL}upload`, file)
   }
 }
 

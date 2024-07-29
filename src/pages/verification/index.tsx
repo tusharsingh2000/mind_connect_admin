@@ -3,7 +3,6 @@ import { ReactNode } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box, { BoxProps } from '@mui/material/Box'
@@ -32,7 +31,7 @@ import { post } from 'src/utils/AxiosMethods'
 import * as yup from 'yup'
 
 // Styled Components
-const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
+const VerificationIllustration = styled('img')(({ theme }) => ({
   zIndex: 2,
   maxHeight: 650,
   marginTop: theme.spacing(12),
@@ -71,10 +70,9 @@ const schema = yup.object().shape({
   email: yup.string().required('Email is required')
 })
 
-const ForgotPassword = () => {
+const Verification = () => {
   // ** Hooks
   const theme = useTheme()
-  const router = useRouter()
 
   // ** Vars
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
@@ -99,10 +97,9 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await post('forgotPassword', data)
+      const response = await post('Verification', data)
       if (response) {
         toast.success('Otp send successfully')
-        router.push('/verification')
       }
     } catch (error) {
       console.log(error)
@@ -124,9 +121,9 @@ const ForgotPassword = () => {
             margin: theme => theme.spacing(8, 0, 8, 8)
           }}
         >
-          <ForgotPasswordIllustration
-            alt='forgot-password-illustration'
-            src={`/images/pages/auth-v2-forgot-password-illustration-${theme.palette.mode}.png`}
+          <VerificationIllustration
+            alt='register-illustration'
+            src={`/images/pages/auth-v2-register-illustration-${theme.palette.mode}.png`}
           />
           <FooterIllustrationsV2 />
         </Box>
@@ -172,9 +169,9 @@ const ForgotPassword = () => {
             </svg>
             <Box sx={{ my: 6 }}>
               <Typography sx={{ mb: 1.5, fontWeight: 500, fontSize: '1.625rem', lineHeight: 1.385 }}>
-                Forgot Password? 🔒
+                Verify Otp
               </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>Please enter your email to continue</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>Please enter the otp send to your email</Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
@@ -214,8 +211,8 @@ const ForgotPassword = () => {
   )
 }
 
-ForgotPassword.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+Verification.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-ForgotPassword.guestGuard = true
+Verification.guestGuard = true
 
-export default ForgotPassword
+export default Verification

@@ -1,14 +1,14 @@
 // ** React Imports
-import { useState, ReactNode, useEffect } from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** MUI Components
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
 import Box, { BoxProps } from '@mui/material/Box'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { styled, useTheme } from '@mui/material/styles'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
+import { styled, useTheme } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -17,23 +17,22 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
-import * as yup from 'yup'
-import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth'
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useAuth } from 'src/hooks/useAuth'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
-import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import { get } from 'src/utils/AxiosMethods'
-import { BASE_URL } from 'src/configs/auth'
+import { Checkbox, FormControlLabel } from '@mui/material'
+import Link from 'next/link'
 import { toast } from 'react-hot-toast'
-import useFcmToken from 'src/utils/useFcm'
+import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
 // ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
@@ -64,30 +63,36 @@ const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
 
 const defaultValues = {
   password: '',
-  token: '',
-  username: ''
+  email: ''
 }
 
 interface FormData {
-  username: string
+  email: string
   password: string
-  token: string
 }
+
+const LinkStyled = styled(Link)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  textDecoration: 'none',
+  justifyContent: 'center',
+  color: theme.palette.primary.main,
+  fontSize: theme.typography.body1.fontSize
+}))
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState<boolean>(false)
+  const [rememberMe, setRememberMe] = useState<boolean>(false)
 
   const schema = yup.object().shape({
-    username: yup.string().required('Username is required'),
-    token: isTwoFactorEnabled ? yup.string().min(6).required() : yup.string().optional(),
+    email: yup.string().required('Email is required'),
     password: yup.string().required('Password is required')
   })
 
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
-  const { fcmToken } = useFcmToken()
+  // const { fcmToken } = useFcmToken()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -105,31 +110,11 @@ const LoginPage = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { username, password, token } = data
-    auth.login(
-      { username, password, rememberMe: true, role: 'Mentee', token, deviceType: 'WEB', deviceToken: fcmToken },
-      (error: any) => {
-        toast.error(error?.response?.data?.message || '')
-      }
-    )
+    const { email, password } = data
+    auth.login({ key: email, password }, (error: any) => {
+      toast.error(error?.response?.data?.message || '')
+    })
   }
-
-  const check2FA = async () => {
-    try {
-      const response = (await get(`${BASE_URL}/auth/check-2fa?role=ADMIN`)) as {
-        isTwoFactorAuthenticationEnabled: boolean
-      }
-      if (response) {
-        setIsTwoFactorEnabled(response?.isTwoFactorAuthenticationEnabled)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    check2FA()
-  }, [])
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
@@ -188,11 +173,11 @@ const LoginPage = () => {
                   />
                 </svg>
                 <Typography variant='h4' sx={{ mb: 1.5 }}>
-                  PV Mentoring
+                  Mind Connect
                 </Typography>
               </Box>
               <Typography variant='h3' sx={{ mb: 1.5 }}>
-                {`Welcome to PV Mentoring 👋🏻`}
+                {`Welcome to Mind Connect 👋🏻`}
               </Typography>
               <Typography sx={{ color: 'text.secondary' }}>
                 Please sign-in to your account and start the adventure
@@ -201,20 +186,20 @@ const LoginPage = () => {
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
                 <Controller
-                  name='username'
+                  name='email'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
                       autoFocus
-                      label='Username'
+                      label='Email'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      placeholder='Username'
-                      error={Boolean(errors.username)}
-                      {...(errors.username && { helperText: errors.username.message })}
+                      placeholder='Email'
+                      error={Boolean(errors.email)}
+                      {...(errors.email && { helperText: errors.email.message })}
                     />
                   )}
                 />
@@ -253,28 +238,6 @@ const LoginPage = () => {
                   )}
                 />
               </Box>
-              <Box sx={{ mb: 4 }}>
-                {isTwoFactorEnabled ? (
-                  <Controller
-                    name='token'
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange, onBlur } }) => (
-                      <CustomTextField
-                        fullWidth
-                        autoFocus
-                        label='2FA Token'
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        placeholder='2FA Token'
-                        error={Boolean(errors.token)}
-                        {...(errors.token && { helperText: errors.token.message })}
-                      />
-                    )}
-                  />
-                ) : null}
-              </Box>
               <Box
                 sx={{
                   mb: 1.75,
@@ -284,67 +247,18 @@ const LoginPage = () => {
                   justifyContent: 'space-between'
                 }}
               >
-                {/* <FormControlLabel
+                <FormControlLabel
                   label='Remember Me'
                   control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
                 />
+
                 <Typography component={LinkStyled} href='/forgot-password'>
                   Forgot Password?
-                </Typography> */}
+                </Typography>
               </Box>
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
                 Login
               </Button>
-              {/* <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Typography sx={{ color: 'text.secondary', mr: 2 }}>New on our platform?</Typography>
-                <Typography href='/register' component={LinkStyled}>
-                  Create an account
-                </Typography>
-              </Box>
-              <Divider
-                sx={{
-                  color: 'text.disabled',
-                  '& .MuiDivider-wrapper': { px: 6 },
-                  fontSize: theme.typography.body2.fontSize,
-                  my: theme => `${theme.spacing(6)} !important`
-                }}
-              >
-                or
-              </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#497ce2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:facebook' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#1da1f2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:twitter' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                  <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#db4437' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:google' />
-                </IconButton>
-              </Box> */}
             </form>
           </Box>
         </Box>

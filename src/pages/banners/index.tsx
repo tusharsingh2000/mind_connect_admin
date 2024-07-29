@@ -1,21 +1,21 @@
 import { SyntheticEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
+import { Icon } from '@iconify/react'
+import TabContext from '@mui/lab/TabContext'
+import MuiTabList, { TabListProps } from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
+import { Box, Button, CircularProgress, Divider } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import TabContext from '@mui/lab/TabContext'
 import MuiTab, { TabProps } from '@mui/material/Tab'
-import MuiTabList, { TabListProps } from '@mui/lab/TabList'
-import { Box, Button, CircularProgress, Divider } from '@mui/material'
-import AddDosForm from './form'
-import TabPanel from '@mui/lab/TabPanel'
-import { Icon } from '@iconify/react'
-import { del, get } from 'src/utils/AxiosMethods'
-import { DODON } from 'src/types/General'
-import UpdateDosForm from './update'
-import AlertDialog from 'src/@core/components/dialog'
+import Typography from '@mui/material/Typography'
 import { toast } from 'react-hot-toast'
+import AlertDialog from 'src/@core/components/dialog'
+import { BANNER } from 'src/types/General'
+import { del, get } from 'src/utils/AxiosMethods'
+import AddDosForm from './form'
+import UpdateDosForm from './update'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -55,11 +55,11 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
   }
 }))
 
-const DosNDons = () => {
+const Banners = () => {
   const [activeTab, setActiveTab] = useState<string>('0')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
-  const [list, setList] = useState<DODON[]>([])
+  const [list, setList] = useState<BANNER[]>([])
   const [selectedItem, setSelectedItem] = useState<string>('')
 
   const handleChange = (event: SyntheticEvent, value: string) => {
@@ -67,13 +67,13 @@ const DosNDons = () => {
     setActiveTab(value)
   }
 
-  const deleteDoDons = async () => {
+  const deleteBanner = async () => {
     try {
-      const response = await del(`/admin/instruction/${selectedItem}`)
+      const response = await del(`/banner/${selectedItem}`)
       if (response) {
         toast.success('Deleted Successfully')
         setOpen(false)
-        getDoDons()
+        getBanner()
       }
     } catch (error) {
       setIsLoading(false)
@@ -81,14 +81,14 @@ const DosNDons = () => {
     }
   }
 
-  const getDoDons = async () => {
+  const getBanner = async () => {
     try {
       setIsLoading(true)
-      const response = (await get(`/admin/instruction/${activeTab}`)) as DODON[]
+      const response = (await get(`/banner?type=${activeTab}`)) as { data: { data: BANNER[] } }
 
       setIsLoading(false)
       if (response) {
-        setList(response || [])
+        setList(response?.data?.data || [])
       }
     } catch (error) {
       setIsLoading(false)
@@ -97,17 +97,21 @@ const DosNDons = () => {
   }
 
   useEffect(() => {
-    getDoDons()
+    getBanner()
   }, [activeTab])
 
-  const DoDo = ({ dodo }: { dodo: DODON }) => {
+  const DoDo = ({ dodo }: { dodo: BANNER }) => {
     return (
       <Box display={'flex'} alignItems='center' gap={5} mb={2}>
-        <Typography component='div' fontSize={14} width={500}>
-          <Typography component='span' fontWeight={700} sx={{ marginRight: '8px' }}>{`${dodo.heading}:`}</Typography>
-          <Typography component='span' fontSize={14}>{`${dodo.description}`}</Typography>
-        </Typography>
-        <UpdateDosForm id={dodo?._id} data={dodo} refetch={getDoDons} />
+        <img style={{ height: 'auto', width: 200 }} src={dodo?.link as any} />
+        <Typography width={300} component='span' fontSize={14}>{`${dodo.remarks}`}</Typography>
+
+        <UpdateDosForm
+          id={dodo?._id}
+          data={{ remarks: dodo.remarks, type: dodo.type }}
+          image={dodo.link}
+          refetch={getBanner}
+        />
         <Button
           onClick={() => {
             setSelectedItem(dodo?._id)
@@ -125,9 +129,9 @@ const DosNDons = () => {
       <Grid item xs={12}>
         <Box display={'flex'} justifyContent='space-between' alignItems='center'>
           <Typography fontSize={32} fontWeight={700}>
-            Do's & Dont's
+            Banners
           </Typography>
-          <AddDosForm refetch={getDoDons} />
+          <AddDosForm refetch={getBanner} />
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -142,8 +146,9 @@ const DosNDons = () => {
             aria-label='forced scroll tabs example'
             sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
           >
-            <Tab value='0' label={`Do's`} />
-            <Tab value='1' label={`Dont's`} />
+            <Tab value='0' label={`Home Top`} />
+            <Tab value='1' label={`Home Bottom`} />
+            <Tab value='2' label={`Community`} />
           </TabList>
           <Box sx={{ mt: 5 }}>
             {isLoading ? (
@@ -155,12 +160,17 @@ const DosNDons = () => {
               <>
                 <TabPanel value='0' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700}>
-                    Do's
+                    Home Top Banner
                   </Typography>
                 </TabPanel>
                 <TabPanel value='1' sx={{ padding: 0, marginBottom: 5 }}>
+                  <Typography fontSize={28} fontWeight={700}>
+                    Home Bottom Banner
+                  </Typography>
+                </TabPanel>
+                <TabPanel value='2' sx={{ padding: 0, marginBottom: 5 }}>
                   <Typography fontSize={28} fontWeight={700} mb={2}>
-                    Dont's
+                    Community Banner
                   </Typography>
                 </TabPanel>
                 {list?.length ? (
@@ -180,7 +190,7 @@ const DosNDons = () => {
       <AlertDialog
         open={open}
         setOpen={setOpen}
-        onOk={deleteDoDons}
+        onOk={deleteBanner}
         title='Hold On!'
         description='Are you sure you want to delete this item?'
       />
@@ -188,4 +198,4 @@ const DosNDons = () => {
   )
 }
 
-export default DosNDons
+export default Banners

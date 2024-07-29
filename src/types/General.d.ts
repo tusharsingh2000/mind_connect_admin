@@ -5,11 +5,18 @@ export type FAQ = {
   type: string
 }
 
-export type DODON = {
+export type CATEGORY = {
   _id: string
   type: number
-  heading: string
-  description: string
+  name: string
+  image: string
+}
+
+export type BANNER = {
+  _id: string
+  type: number
+  remarks: string
+  link: string
 }
 
 export type TOPIC = {

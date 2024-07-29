@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // ** MUI Imports
+import { Box } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import { get } from 'src/utils/AxiosMethods'
-import RechartsLineChart from 'src/@core/components/dashboard-chart'
-import { Box } from '@mui/material'
 import { useRouter } from 'next/router'
+import RechartsLineChart from 'src/@core/components/dashboard-chart'
+import { get } from 'src/utils/AxiosMethods'
 
 type Dashboard = {
   notificationCount: number
@@ -96,12 +96,12 @@ const Home = () => {
     }
   }
 
-  useEffect(() => {
-    getDashboard()
-  }, [])
-  useEffect(() => {
-    getGraphData()
-  }, [active])
+  // useEffect(() => {
+  //   getDashboard()
+  // }, [])
+  // useEffect(() => {
+  //   getGraphData()
+  // }, [active])
 
   return (
     <Box>

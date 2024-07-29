@@ -1,14 +1,14 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment, ReactNode, useEffect } from 'react'
+import { Fragment, ReactNode, SyntheticEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
-import { styled, Theme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import MuiMenu, { MenuProps } from '@mui/material/Menu'
 import MuiMenuItem, { MenuItemProps } from '@mui/material/MenuItem'
+import { styled, Theme } from '@mui/material/styles'
 import Typography, { TypographyProps } from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -17,16 +17,16 @@ import Icon from 'src/@core/components/icon'
 import PerfectScrollbarComponent from 'react-perfect-scrollbar'
 
 // ** Type Imports
-import { ThemeColor } from 'src/@core/layouts/types'
 import { Settings } from 'src/@core/context/settingsContext'
+import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
 
 // ** Util Import
-import { get } from 'src/utils/AxiosMethods'
-import { Notifications } from 'src/types/General'
 import { formatDistanceToNow } from 'date-fns'
+import { Notifications } from 'src/types/General'
+import { get } from 'src/utils/AxiosMethods'
 
 export type NotificationsType = {
   meta: string
@@ -162,8 +162,8 @@ const NotificationDropdown = (props: Props) => {
   }
 
   useEffect(() => {
-    getNotificationsCount()
-    getNotifications()
+    // getNotificationsCount()
+    // getNotifications()
   }, [])
 
   return (
