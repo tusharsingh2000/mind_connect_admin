@@ -26,7 +26,6 @@ import CustomChip from 'src/@core/components/mui/chip'
 // ** Util Import
 import { formatDistanceToNow } from 'date-fns'
 import { Notifications } from 'src/types/General'
-import { get } from 'src/utils/AxiosMethods'
 
 export type NotificationsType = {
   meta: string
@@ -122,8 +121,9 @@ const NotificationDropdown = (props: Props) => {
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null)
-  const [count, setCount] = useState(0)
-  const [notifications, setNotifications] = useState<Notifications[]>([])
+
+  // const [count, setCount] = useState(0)
+  // const [notifications, setNotifications] = useState<Notifications[]>([])
 
   // ** Hook
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
@@ -139,27 +139,27 @@ const NotificationDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
-  const getNotificationsCount = async () => {
-    try {
-      const response = (await get(`admin/unread-notification`)) as { count: number }
-      if (response?.count) {
-        setCount(response.count)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getNotificationsCount = async () => {
+  //   try {
+  //     const response = (await get(`admin/unread-notification`)) as { count: number }
+  //     if (response?.count) {
+  //       setCount(response.count)
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  const getNotifications = async () => {
-    try {
-      const response = (await get(`notification`)) as Notifications[]
-      if (response?.length) {
-        setNotifications(response)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getNotifications = async () => {
+  //   try {
+  //     const response = (await get(`notification`)) as Notifications[]
+  //     if (response?.length) {
+  //       setNotifications(response)
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   useEffect(() => {
     // getNotificationsCount()
@@ -183,7 +183,7 @@ const NotificationDropdown = (props: Props) => {
             position: 'relative'
           }}
         >
-          {count ? (
+          {0 ? (
             <Box
               sx={{
                 position: 'absolute',
@@ -226,11 +226,11 @@ const NotificationDropdown = (props: Props) => {
             <Typography variant='h5' sx={{ cursor: 'text' }}>
               Notifications
             </Typography>
-            <CustomChip skin='light' size='small' color='primary' label={`${count} New`} />
+            <CustomChip skin='light' size='small' color='primary' label={`${0} New`} />
           </Box>
         </MenuItem>
         <ScrollWrapper hidden={hidden}>
-          {notifications.map((notification: Notifications, index: number) => (
+          {[].map((notification: Notifications, index: number) => (
             <MenuItem key={index} disableRipple disableTouchRipple onClick={handleDropdownClose}>
               <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                 {notification?.isRead ? null : (

@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -26,8 +26,10 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Dialog, DialogContent, DialogTitle, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
+import authConfig from 'src/configs/auth'
 import { post } from 'src/utils/AxiosMethods'
 import * as yup from 'yup'
 
@@ -76,6 +78,17 @@ const ForgotPassword = () => {
   const theme = useTheme()
   const router = useRouter()
 
+  const [open, setOpen] = useState(false)
+  const [otp, setOtp] = useState('')
+
+  const handleChange = (newValue: string) => {
+    setOtp(newValue)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   // ** Vars
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -90,6 +103,7 @@ const ForgotPassword = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -102,7 +116,26 @@ const ForgotPassword = () => {
       const response = await post('forgotPassword', data)
       if (response) {
         toast.success('Otp send successfully')
-        router.push('/verification')
+        setOpen(true)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const onSubmitOtp = async () => {
+    try {
+      const email = getValues('email')
+      const response = (await post('verifyOtp', {
+        key: email || '',
+        code: otp
+      })) as any
+      if (response) {
+        toast.success('Otp verfified successfully')
+        window.localStorage.setItem(authConfig.tempStorageTokenKeyName, response?.data?.token)
+        setOpen(false)
+        setOtp('')
+        router.push('reset-password')
       }
     } catch (error) {
       console.log(error)
@@ -210,6 +243,27 @@ const ForgotPassword = () => {
           </Box>
         </Box>
       </RightWrapper>
+      <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' fullWidth maxWidth='xs'>
+        <DialogTitle id='form-dialog-title'>
+          <Typography fontSize={24} fontWeight={600}>
+            Please enter Otp
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            value={otp}
+            onChange={val => {
+              if (!isNaN(Number(val.target.value)) && val.target.value.length < 7) {
+                handleChange(val.target.value)
+              }
+            }}
+          />
+          <Button onClick={onSubmitOtp} fullWidth type='submit' variant='contained' sx={{ my: 5 }}>
+            Continue
+          </Button>
+        </DialogContent>
+      </Dialog>
     </Box>
   )
 }

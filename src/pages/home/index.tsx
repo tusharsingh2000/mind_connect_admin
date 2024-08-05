@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import { Box } from '@mui/material'
@@ -6,15 +6,14 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
 import RechartsLineChart from 'src/@core/components/dashboard-chart'
-import { get } from 'src/utils/AxiosMethods'
 
-type Dashboard = {
-  notificationCount: number
-  numberOfAcceptedMentees: number
-  numberOfApplicantMentees: number
-  numberOfMentors: number
-  numberOfSessions: number
-}
+// type Dashboard = {
+//   notificationCount: number
+//   numberOfAcceptedMentees: number
+//   numberOfApplicantMentees: number
+//   numberOfMentors: number
+//   numberOfSessions: number
+// }
 
 const Home = () => {
   const router = useRouter()
@@ -31,77 +30,78 @@ const Home = () => {
 
   const cards = [
     {
-      label: 'Mentors',
+      label: 'Users',
       value: dashboardData?.mentor || '0',
       color: '#ECF5EE',
-      navigateTo: '/mentors'
+      navigateTo: '/'
     },
     {
-      label: 'Mentees',
+      label: 'Consultant',
       value: dashboardData?.mentees || '0',
       color: '#FDEBE9',
-      navigateTo: '/mentees'
+      navigateTo: '/'
     },
     {
-      label: 'Applicants',
+      label: 'Bookings',
       value: dashboardData?.applicants || '0',
       color: '#E6F1F9',
-      navigateTo: '/mentees'
+      navigateTo: '/'
     },
     {
       label: 'Sessions',
-      value: '95',
+      value: '0',
       color: '#FEF4E6',
-      navigateTo: '/sessions'
+      navigateTo: '/'
     }
   ]
 
-  const getDashboard = async () => {
-    try {
-      const response = (await get(`/admin/dashboard`)) as Dashboard
-      if (response) {
-        setDashboardData({
-          ...dashboardData,
-          applicants: response?.numberOfApplicantMentees || 0,
-          mentees: response?.numberOfAcceptedMentees || 0,
-          mentor: response?.numberOfMentors || 0,
-          sessions: response?.numberOfSessions || 0
-        })
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getDashboard = async () => {
+  //   try {
+  //     const response = (await get(`/admin/dashboard`)) as Dashboard
+  //     if (response) {
+  //       setDashboardData({
+  //         ...dashboardData,
+  //         applicants: response?.numberOfApplicantMentees || 0,
+  //         mentees: response?.numberOfAcceptedMentees || 0,
+  //         mentor: response?.numberOfMentors || 0,
+  //         sessions: response?.numberOfSessions || 0
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  const getGraphData = async () => {
-    try {
-      const response = (await get(`/admin/graph-data?type=${active}`)) as any
-      if (response) {
-        setGraphData(
-          response?.map((item: any) => {
-            const key = Object.keys(item)[0] as any
-            const value = Object.values(item)[0] as any
+  // const getGraphData = async () => {
+  //   try {
+  //     const response = (await get(`/admin/graph-data?type=${active}`)) as any
+  //     if (response) {
+  //       setGraphData(
+  //         response?.map((item: any) => {
+  //           const key = Object.keys(item)[0] as any
+  //           const value = Object.values(item)[0] as any
 
-            return {
-              name: key,
-              canceled: value.canceled,
-              completed: value.completed,
-              rescheduled: value.rescheduled
-            }
-          })
-        )
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  //           return {
+  //             name: key,
+  //             canceled: value.canceled,
+  //             completed: value.completed,
+  //             rescheduled: value.rescheduled
+  //           }
+  //         })
+  //       )
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   // useEffect(() => {
   //   getDashboard()
   // }, [])
-  // useEffect(() => {
-  //   getGraphData()
-  // }, [active])
+  useEffect(() => {
+    setGraphData([])
+    setDashboardData({ mentor: 0, mentees: 0, sessions: 0, applicants: 0 })
+  }, [])
 
   return (
     <Box>

@@ -1,16 +1,16 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { Fragment, SyntheticEvent, useState } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
 
 // ** MUI Imports
+import Avatar from '@mui/material/Avatar'
+import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
-import Badge from '@mui/material/Badge'
-import Avatar from '@mui/material/Avatar'
-import { styled } from '@mui/material/styles'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
+import { styled } from '@mui/material/styles'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -19,7 +19,15 @@ import Icon from 'src/@core/components/icon'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
+import { Button, Dialog, DialogContent, DialogTitle, TextField, Typography } from '@mui/material'
 import { Settings } from 'src/@core/context/settingsContext'
+
+// ** Third Party Imports
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import { post } from 'src/utils/AxiosMethods'
+import * as yup from 'yup'
 
 interface Props {
   settings: Settings
@@ -46,6 +54,7 @@ const UserDropdown = (props: Props) => {
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+  const [open, setOpen] = useState<boolean>(false)
 
   // ** Hooks
   const router = useRouter()
@@ -65,6 +74,69 @@ const UserDropdown = (props: Props) => {
     setAnchorEl(null)
   }
 
+  const handleLogout = () => {
+    logout()
+    handleDropdownClose()
+  }
+
+  const handleDialogOpen = () => {
+    handleDropdownClose()
+    setOpen(true)
+  }
+
+  const handleDialogClose = () => {
+    handleDropdownClose()
+    setOpen(false)
+  }
+
+  // ** Validation Schema
+  const schema = yup.object().shape({
+    currentPassword: yup.string().required('Current Password is required'),
+    newPassword: yup
+      .string()
+      .notOneOf([yup.ref('currentPassword')], 'New Password cannot be the same as Current Password')
+      .required('New Password is required'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('newPassword')], 'Passwords must match')
+      .required('Confirm New Password is required')
+  })
+
+  const defaultValues = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    formState: { errors }
+  } = useForm({
+    defaultValues,
+    resolver: yupResolver(schema)
+  })
+
+  const onSubmit = async (data: any) => {
+    console.log(data)
+    try {
+      const response = await post('changePassword', {
+        oldPassword: data.currentPassword,
+        password: data.newPassword
+      })
+      if (response) {
+        toast.success('Password changed successfully')
+        handleDialogClose()
+        resetField('confirmPassword')
+        resetField('newPassword')
+        resetField('currentPassword')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const styles = {
     px: 4,
     py: 1.75,
@@ -78,11 +150,6 @@ const UserDropdown = (props: Props) => {
       fontSize: '1.5rem',
       color: 'text.secondary'
     }
-  }
-
-  const handleLogout = () => {
-    logout()
-    handleDropdownClose()
   }
 
   return (
@@ -112,63 +179,12 @@ const UserDropdown = (props: Props) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }}
       >
-        {/* <Box sx={{ py: 1.75, px: 6 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Badge
-              overlap='circular'
-              badgeContent={<BadgeContentSpan />}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-            >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-            </Badge>
-            <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
-              <Typography variant='body2'>Admin</Typography>
-            </Box>
-          </Box>
-        </Box> */}
-        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
-        {/* <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItemStyled sx={{ p: 0 }} onClick={handleDialogOpen}>
           <Box sx={styles}>
-            <Icon icon='tabler:user-check' />
-            My Profile
+            <Icon icon='material-symbols:password' />
+            Change Password
           </Box>
         </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <Icon icon='tabler:settings' />
-            Settings
-          </Box>
-        </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <Icon icon='tabler:credit-card' />
-            Billing
-          </Box>
-        </MenuItemStyled>
-        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <Icon icon='tabler:lifebuoy' />
-            Help
-          </Box>
-        </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <Icon icon='tabler:info-circle' />
-            FAQ
-          </Box>
-        </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <Icon icon='tabler:currency-dollar' />
-            Pricing
-          </Box>
-        </MenuItemStyled> */}
-        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
         <MenuItemStyled sx={{ p: 0 }} onClick={handleLogout}>
           <Box sx={styles}>
             <Icon icon='tabler:logout' />
@@ -176,6 +192,74 @@ const UserDropdown = (props: Props) => {
           </Box>
         </MenuItemStyled>
       </Menu>
+      <Dialog
+        open={open}
+        onClose={handleDialogClose}
+        aria-labelledby='change-password-dialog-title'
+        fullWidth
+        maxWidth='xs'
+      >
+        <DialogTitle id='change-password-dialog-title'>
+          <Typography fontSize={24} fontWeight={600}>
+            Change Password
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+            <Box sx={{ mb: 4 }}>
+              <Controller
+                name='currentPassword'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Current Password'
+                    type='password'
+                    error={Boolean(errors.currentPassword)}
+                    helperText={errors.currentPassword?.message}
+                  />
+                )}
+              />
+            </Box>
+            <Box sx={{ mb: 4 }}>
+              <Controller
+                name='newPassword'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='New Password'
+                    type='password'
+                    error={Boolean(errors.newPassword)}
+                    helperText={errors.newPassword?.message}
+                  />
+                )}
+              />
+            </Box>
+            <Box sx={{ mb: 4 }}>
+              <Controller
+                name='confirmPassword'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Confirm New Password'
+                    type='password'
+                    error={Boolean(errors.confirmPassword)}
+                    helperText={errors.confirmPassword?.message}
+                  />
+                )}
+              />
+            </Box>
+            <Button onClick={handleSubmit(onSubmit)} fullWidth type='submit' variant='contained' sx={{ my: 5 }}>
+              Change Password
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Fragment>
   )
 }

@@ -42,8 +42,9 @@ const handleError = (error: AxiosError<ErrorResponse, any>): never => {
 
 const getAuthorizationHeader = () => {
   const token = window.localStorage.getItem(authConfig.storageTokenKeyName)
+  const temp_token = window.localStorage.getItem(authConfig.tempStorageTokenKeyName)
 
-  return token ? { Authorization: `Bearer ${token}` } : {}
+  return token ? { Authorization: `Bearer ${token}` } : temp_token ? { Authorization: `Bearer ${temp_token}` } : {}
 }
 
 const getFormDataHeader = () => {

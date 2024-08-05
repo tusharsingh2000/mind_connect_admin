@@ -8,6 +8,7 @@ const navigation = (): VerticalNavItemsType => {
       path: '/home',
       icon: 'mage:dashboard-fill'
     },
+
     // {
     //   title: 'Users',
     //   path: '/mentees',
@@ -38,6 +39,7 @@ const navigation = (): VerticalNavItemsType => {
       path: '/banners',
       icon: 'material-symbols:planner-banner-ad-pt'
     },
+
     // {
     //   title: 'FAQs',
     //   path: '/faqs',

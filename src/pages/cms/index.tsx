@@ -29,13 +29,13 @@ const DosNDons = () => {
   const getCms = async () => {
     try {
       const response = (await get(`${BASE_URL}cms`)) as {
-        data: { privacyPolicy: string; tnc: string; about: string; _id: string }[]
+        data: { privacyPolicy: string; tnc: string; about: string; _id: string }
       }
-      if (response?.data?.length) {
-        setPrivacy(response?.data?.[0]?.privacyPolicy || ' ')
-        setTnc(response?.data?.[0]?.tnc || ' ')
-        setAbout(response?.data?.[0]?.about || ' ')
-        setCmsId(response?.data?.[0]?._id || ' ')
+      if (response?.data) {
+        setPrivacy(response?.data?.privacyPolicy || ' ')
+        setTnc(response?.data?.tnc || ' ')
+        setAbout(response?.data?.about || ' ')
+        setCmsId(response?.data?._id || ' ')
       }
     } catch (error) {
       console.log(error)

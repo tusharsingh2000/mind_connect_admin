@@ -1,8 +1,8 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** Next Import
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box, { BoxProps } from '@mui/material/Box'
@@ -14,9 +14,6 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
@@ -25,13 +22,15 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
 // ** Third Party Imports
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Icon } from '@iconify/react'
+import { IconButton, InputAdornment } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { post } from 'src/utils/AxiosMethods'
 import * as yup from 'yup'
 
 // Styled Components
-const VerificationIllustration = styled('img')(({ theme }) => ({
+const ResetPasswordIllustration = styled('img')(({ theme }) => ({
   zIndex: 2,
   maxHeight: 650,
   marginTop: theme.spacing(12),
@@ -57,32 +56,32 @@ const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }))
 
-const LinkStyled = styled(Link)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  textDecoration: 'none',
-  justifyContent: 'center',
-  color: theme.palette.primary.main,
-  fontSize: theme.typography.body1.fontSize
-}))
-
 const schema = yup.object().shape({
-  email: yup.string().required('Email is required')
+  password: yup.string().required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .required('Confirm Password is required')
+    .oneOf([yup.ref('password'), ''], 'Passwords must match')
 })
 
-const Verification = () => {
+const ResetPassword = () => {
   // ** Hooks
   const theme = useTheme()
+  const router = useRouter()
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
 
   // ** Vars
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
   const defaultValues = {
-    email: ''
+    password: '',
+    confirmPassword: ''
   }
 
   interface FormData {
-    email: string
+    password: string
+    confirmPassword: string
   }
 
   const {
@@ -97,9 +96,12 @@ const Verification = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await post('Verification', data)
+      const response = await post('setPassword', {
+        password: data.password
+      })
       if (response) {
-        toast.success('Otp send successfully')
+        toast.success('Password set successfully')
+        router.replace('login')
       }
     } catch (error) {
       console.log(error)
@@ -121,8 +123,8 @@ const Verification = () => {
             margin: theme => theme.spacing(8, 0, 8, 8)
           }}
         >
-          <VerificationIllustration
-            alt='register-illustration'
+          <ResetPasswordIllustration
+            alt='forgot-password-illustration'
             src={`/images/pages/auth-v2-register-illustration-${theme.palette.mode}.png`}
           />
           <FooterIllustrationsV2 />
@@ -169,40 +171,82 @@ const Verification = () => {
             </svg>
             <Box sx={{ my: 6 }}>
               <Typography sx={{ mb: 1.5, fontWeight: 500, fontSize: '1.625rem', lineHeight: 1.385 }}>
-                Verify Otp
+                Reset Password 🔏
               </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>Please enter the otp send to your email</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>Please enter your email to continue</Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
                 <Controller
-                  name='email'
+                  name='password'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <CustomTextField
                       fullWidth
-                      autoFocus
-                      label='Email'
                       value={value}
                       onBlur={onBlur}
+                      label='Password'
+                      placeholder='New Password'
                       onChange={onChange}
-                      placeholder='Email'
-                      error={Boolean(errors.email)}
-                      {...(errors.email && { helperText: errors.email.message })}
+                      id='auth-login-v2-password'
+                      error={Boolean(errors.password)}
+                      {...(errors.password && { helperText: errors.password.message })}
+                      type={showPassword ? 'text' : 'password'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position='end'>
+                            <IconButton
+                              edge='end'
+                              onMouseDown={e => e.preventDefault()}
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+              <Box sx={{ mb: 4 }}>
+                <Controller
+                  name='confirmPassword'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <CustomTextField
+                      fullWidth
+                      value={value}
+                      onBlur={onBlur}
+                      label='confirmPassword'
+                      placeholder='Confirm New Password'
+                      onChange={onChange}
+                      id='auth-login-v2-password'
+                      error={Boolean(errors.confirmPassword)}
+                      {...(errors.confirmPassword && { helperText: errors.confirmPassword.message })}
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position='end'>
+                            <IconButton
+                              edge='end'
+                              onMouseDown={e => e.preventDefault()}
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                              <Icon fontSize='1.25rem' icon={showConfirmPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
                     />
                   )}
                 />
               </Box>
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                Continue
+                Reset
               </Button>
-              <Typography sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}>
-                <LinkStyled href='/login'>
-                  <Icon fontSize='1.25rem' icon='tabler:chevron-left' />
-                  <span>Back to login</span>
-                </LinkStyled>
-              </Typography>
             </form>
           </Box>
         </Box>
@@ -211,8 +255,8 @@ const Verification = () => {
   )
 }
 
-Verification.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+ResetPassword.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-Verification.guestGuard = true
+ResetPassword.guestGuard = true
 
-export default Verification
+export default ResetPassword

@@ -5,5 +5,7 @@ export default {
   loginEndpoint: '/jwt/login',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'accessToken',
+  tempStorageTokenKeyName: 'tempToken',
+  userCreds: 'userCreds',
   onTokenExpiration: 'refreshToken' // logout | refreshToken
 }
